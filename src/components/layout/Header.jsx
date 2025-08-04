@@ -24,7 +24,7 @@ const Header = () => {
 
   return (
     <header className="w-full bg-black text-white">
-      <div className="mx-auto max-w-[1216px] px-4 sm:px-6 lg:px-8 py-3">
+      <div className="mx-auto max-w-[1280px] px-4 sm:px-6 lg:px-8 py-3">
         <div className="rounded-[15px] bg-[#1F1F1F] border border-[#2D2D2D] h-[74px] px-4 sm:px-6 lg:px-8 flex items-center justify-between">
           {/* Logo */}
           <div className="flex items-center gap-2 min-w-0">

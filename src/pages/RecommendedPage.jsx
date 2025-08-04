@@ -1,4 +1,3 @@
-// src/pages/RecommendedPage.jsx
 import { useEffect, useState } from "react";
 import MainLayout from "../components/layout/MainLayout";
 import SidebarContent from "../components/layout/SidebarContent";
@@ -23,7 +22,6 @@ const RecommendedPage = () => {
         console.error("Kitaplar alınamadı", err);
       }
     };
-
     fetchBooks();
   }, [filters, page]);
 
@@ -38,8 +36,9 @@ const RecommendedPage = () => {
         <SidebarContent filters={filters} onFilterChange={handleFilterChange} />
       }
     >
-      {/* Figma genişlikleri: mobile 335, tablet 704, desktop 847 */}
-      <div className="w-[335px] sm:w-[704px] lg:w-[847px] mx-auto space-y-6">
+      {/* İçerik: Figma genişlikleri (mobile 335 / tablet 704 / desktop 847). 
+          Burada max-width ile sınırlandırıyoruz; hizalama sidebar’ın hemen yanında kalır. */}
+      <div className="w-full max-w-[335px] sm:max-w-[704px] lg:max-w-[847px] space-y-6">
         <BookList
           books={books}
           onBookClick={(book) => setSelectedBook(book)}
