@@ -22,9 +22,11 @@ const Header = () => {
   const linkActive =
     "text-white after:content-[''] after:bg-[#6C8CFF] after:h-[3px] after:w-10 after:rounded-full after:absolute after:left-1/2 after:-translate-x-1/2 after:-bottom-2";
 
+  console.log("User from Redux:", user);
+
   return (
     <header className="w-full bg-black text-white">
-      <div className="mx-auto max-w-[1280px] px-4 sm:px-6 lg:px-8 py-3">
+      <div className="mx-auto max-w-[1310px] px-4 sm:px-6 lg:px-8 py-3">
         <div className="rounded-[15px] bg-[#1F1F1F] border border-[#2D2D2D] h-[74px] px-4 sm:px-6 lg:px-8 flex items-center justify-between">
           {/* Logo */}
           <div className="flex items-center gap-2 min-w-0">
@@ -61,10 +63,19 @@ const Header = () => {
 
           {/* Sağ – Kullanıcı + Logout */}
           <div className="flex items-center gap-3">
-            <div className="h-[42px] w-[42px] rounded-full border border-[#4B4B4B] flex items-center justify-center text-lg">
+            {/* Avatar (ilk harf) */}
+            <div className="h-[42px] w-[42px] rounded-full border border-[#4B4B4B] flex items-center justify-center text-white font-semibold text-lg">
               {(user?.name || user?.email || "U").charAt(0).toUpperCase()}
             </div>
 
+            {/* Kullanıcı adı veya e-posta */}
+            {(user?.name || user?.email) && (
+              <span className="hidden md:inline text-sm text-white font-medium truncate max-w-[120px]">
+                {(user?.name || user?.email).toUpperCase()}
+              </span>
+            )}
+
+            {/* Log out */}
             <button
               onClick={handleLogout}
               className="hidden md:inline-flex h-[42px] items-center rounded-full border border-[#4B4B4B] px-6 text-[15px] hover:bg-[#242424] transition"

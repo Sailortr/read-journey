@@ -42,7 +42,7 @@ const BookList = ({ books, onBookClick, page, setPage, totalPages }) => {
 
       {/* Kitap Grid */}
       <div
-        className="grid gap-x-6 gap-y-8
+        className="grid gap-x-6 gap-y-20
         grid-cols-2
         sm:grid-cols-4
         xl:grid-cols-5

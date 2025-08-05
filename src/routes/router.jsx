@@ -1,4 +1,3 @@
-// src/routes/router.jsx
 import {
   BrowserRouter as Router,
   Routes,
@@ -9,9 +8,10 @@ import {
 import LoginPage from "../pages/LoginPage";
 import RegisterPage from "../pages/RegisterPage";
 import RecommendedPage from "../pages/RecommendedPage";
-import LibraryPage from "../pages/LibraryPage";
+import MyLibraryPage from "../pages/MyLibraryPage"; // ← Buradaki + işaretini kaldırdık
 import ReadingPage from "../pages/ReadingPage";
 import ProtectedRoute from "./ProtectedRoute";
+import Header from "../components/layout/Header";
 
 const AppRouter = () => {
   return (
@@ -32,7 +32,8 @@ const AppRouter = () => {
           path="/library"
           element={
             <ProtectedRoute>
-              <LibraryPage />
+              <Header />
+              <MyLibraryPage />
             </ProtectedRoute>
           }
         />

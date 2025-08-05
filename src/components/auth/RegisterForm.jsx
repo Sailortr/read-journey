@@ -7,7 +7,6 @@ import { registerThunk } from "../../redux/thunks/authThunks";
 import { useNavigate, Link } from "react-router-dom";
 import { toast } from "react-toastify";
 
-// SVG ikonları
 import EyeIcon from "../../assets/eye.svg";
 import EyeOffIcon from "../../assets/eye-off.svg";
 
@@ -53,7 +52,6 @@ export default function RegisterForm() {
                  xl:bg-transparent xl:px-0 xl:py-0"
     >
       <div className="space-y-6">
-        {/* Name */}
         <div className="flex flex-col gap-1">
           <label className="text-sm text-gray-400"></label>
           <input
@@ -67,7 +65,6 @@ export default function RegisterForm() {
           )}
         </div>
 
-        {/* Email */}
         <div className="flex flex-col gap-1">
           <label className="text-sm text-gray-400"></label>
           <input
@@ -102,7 +99,6 @@ export default function RegisterForm() {
           )}
         </div>
         <div className="flex items-center justify-start gap-6 mt-auto pt-6">
-          {/* Submit Button */}
           <button
             disabled={isSubmitting}
             type="submit"
@@ -111,7 +107,6 @@ export default function RegisterForm() {
             {isSubmitting ? "Registering..." : "Registration"}
           </button>
 
-          {/* Already have account */}
           <p className="text-sm text-gray-400">
             Already have an account?{" "}
             <Link to="/login" className="underline hover:text-white">

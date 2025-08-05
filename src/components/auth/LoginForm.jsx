@@ -48,7 +48,6 @@ export default function LoginForm() {
       onSubmit={handleSubmit(onSubmit)}
       className="w-full max-w-sm mx-auto text-white h-full flex flex-col justify-between"
     >
-      {/* EMAIL */}
       <div>
         <div className="mb-6">
           <label className="block text-sm font-medium mb-1 text-gray-500"></label>
@@ -63,7 +62,6 @@ export default function LoginForm() {
           )}
         </div>
 
-        {/* PASSWORD */}
         <div className="mb-6 relative">
           <label className="block text-sm font-medium mb-1 text-gray-500"></label>
           <input
@@ -91,7 +89,6 @@ export default function LoginForm() {
         </div>
       </div>
 
-      {/* ALT KISIM: Buton ve metin yan yana sola sabit */}
       <div className="flex items-center justify-start gap-6 mt-auto pt-6">
         <button
           disabled={isSubmitting}

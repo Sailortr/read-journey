@@ -6,7 +6,18 @@ export const registerThunk = createAsyncThunk(
   "auth/register",
   async (formData, { rejectWithValue }) => {
     try {
-      return await authService.registerUser(formData);
+      const response = await authService.registerUser(formData);
+
+      const user = {
+        name: response.name,
+        email: response.email,
+      };
+
+      return {
+        user,
+        token: response.token,
+        refreshToken: response.refreshToken,
+      };
     } catch (err) {
       return rejectWithValue(
         err?.response?.data?.message || "Registration failed"
@@ -20,7 +31,18 @@ export const loginThunk = createAsyncThunk(
   "auth/login",
   async (formData, { rejectWithValue }) => {
     try {
-      return await authService.loginUser(formData);
+      const response = await authService.loginUser(formData);
+
+      const user = {
+        name: response.name,
+        email: response.email,
+      };
+
+      return {
+        user,
+        token: response.token,
+        refreshToken: response.refreshToken,
+      };
     } catch (err) {
       return rejectWithValue(err?.response?.data?.message || "Login failed");
     }

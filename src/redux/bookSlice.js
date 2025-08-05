@@ -3,6 +3,7 @@ import {
   fetchRecommendedBooks,
   addBookToLibrary,
   fetchLibraryBooks,
+  removeBookFromLibrary, // ✅ Eklenen thunk
 } from "./thunks/bookThunks";
 
 const initialState = {
@@ -29,11 +30,18 @@ const bookSlice = createSlice({
         state.error = action.payload;
         state.isLoading = false;
       })
+
       .addCase(fetchLibraryBooks.fulfilled, (state, action) => {
         state.books = action.payload;
       })
+
       .addCase(addBookToLibrary.fulfilled, (state, action) => {
         state.books.push(action.payload);
+      })
+
+      // ✅ Buraya remove işlemini ekledik:
+      .addCase(removeBookFromLibrary.fulfilled, (state, action) => {
+        state.books = state.books.filter((book) => book._id !== action.payload);
       });
   },
 });
