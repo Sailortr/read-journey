@@ -1,7 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import readingService from "../../services/readingService";
 
-// thunk - kitap okumaya başla
 export const startReadingThunk = createAsyncThunk(
   "reading/start",
   async ({ bookId, page }) => {
@@ -9,7 +8,6 @@ export const startReadingThunk = createAsyncThunk(
   }
 );
 
-// thunk - kitap okumayı bitir
 export const stopReadingThunk = createAsyncThunk(
   "reading/stop",
   async ({ bookId, page }) => {
@@ -17,7 +15,6 @@ export const stopReadingThunk = createAsyncThunk(
   }
 );
 
-// thunk - kitap istatistikleri
 export const fetchReadingStats = createAsyncThunk(
   "reading/stats",
   async (bookId) => {
@@ -25,7 +22,6 @@ export const fetchReadingStats = createAsyncThunk(
   }
 );
 
-// thunk - okuma günlüğü
 export const fetchReadingDiary = createAsyncThunk(
   "reading/diary",
   async (bookId) => {
@@ -33,7 +29,6 @@ export const fetchReadingDiary = createAsyncThunk(
   }
 );
 
-// thunk - günlüğü sil
 export const deleteDiaryEntryThunk = createAsyncThunk(
   "reading/deleteEntry",
   async (entryId) => {

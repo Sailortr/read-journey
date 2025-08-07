@@ -1,9 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { logoutThunk } from "./thunks/authThunks";
 import {
   fetchRecommendedBooks,
-  addBookToLibrary,
+  addBookToLibraryThunk,
   fetchLibraryBooks,
-  removeBookFromLibrary, // ✅ Eklenen thunk
+  removeBookFromLibrary,
+  addRecommendedBookToLibrary,
 } from "./thunks/bookThunks";
 
 const initialState = {
@@ -35,13 +37,22 @@ const bookSlice = createSlice({
         state.books = action.payload;
       })
 
-      .addCase(addBookToLibrary.fulfilled, (state, action) => {
+      .addCase(addBookToLibraryThunk.fulfilled, (state, action) => {
         state.books.push(action.payload);
       })
 
-      // ✅ Buraya remove işlemini ekledik:
       .addCase(removeBookFromLibrary.fulfilled, (state, action) => {
         state.books = state.books.filter((book) => book._id !== action.payload);
+      })
+
+      .addCase(addRecommendedBookToLibrary.fulfilled, (state, action) => {
+        state.books.push(action.payload);
+      })
+
+      .addCase(logoutThunk.fulfilled, (state) => {
+        state.books = [];
+        state.recommendedBooks = [];
+        state.error = null;
       });
   },
 });

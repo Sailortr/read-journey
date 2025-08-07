@@ -1,4 +1,3 @@
-// src/components/reading/ReadingStats.jsx
 import React from "react";
 
 const ReadingStats = ({ stats }) => {

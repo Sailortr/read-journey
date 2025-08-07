@@ -1,4 +1,3 @@
-// src/components/library/FilterDropdown.jsx
 import { useState } from "react";
 import { FaChevronDown } from "react-icons/fa";
 

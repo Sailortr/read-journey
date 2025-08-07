@@ -12,13 +12,11 @@ const SidebarContent = ({ filters, onFilterChange }) => {
   return (
     <aside className="w-full lg:w-[353px] shrink-0 bg-black">
       <div className="flex flex-col gap-6 rounded-[30px] bg-[#1F1F1F] p-4 sm:p-6">
-        {/* FILTERS */}
         <section className="rounded-[24px] bg-[#1F1F1F] border border-[#262626] p-4 sm:p-5">
           <h3 className="text-xs tracking-wide text-gray-300 mb-3">Filters:</h3>
           <FilterForm filters={filters} onChange={onFilterChange} />
         </section>
 
-        {/* START YOUR WORKOUT */}
         <section className="rounded-[24px] bg-[#262626] border border-[#2D2D2D] p-4 sm:p-5">
           <h3 className="text-white font-semibold text-base mb-4">
             Start your workout
@@ -59,10 +57,8 @@ const SidebarContent = ({ filters, onFilterChange }) => {
           </div>
         </section>
 
-        {/* QUOTE (books.svg ile) */}
         <section className="rounded-[24px] bg-[#262626] border border-[#2D2D2D] p-4 sm:p-5">
           <div className="flex items-start gap-3">
-            {/* 🔹 Her kırılımda görünür; boyutlar responsive */}
             <img
               src={booksIcon}
               alt="Books"

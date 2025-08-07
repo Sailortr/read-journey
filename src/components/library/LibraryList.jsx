@@ -6,7 +6,11 @@ const LibraryList = ({ books = [], onRemove }) => {
     e.target.src = fallbackImg;
   };
 
-  if (!Array.isArray(books) || books.length === 0) {
+  const validBooks = Array.isArray(books)
+    ? books.filter((book) => book && typeof book === "object")
+    : [];
+
+  if (validBooks.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center text-center text-gray-400 mt-10">
         <img
@@ -25,16 +29,15 @@ const LibraryList = ({ books = [], onRemove }) => {
 
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-      {books.map((book) => (
+      {validBooks.map((book) => (
         <div
           key={book._id || book.id}
           className="relative bg-[#1F1F1F] text-white p-3 rounded-xl border border-[#2D2D2D] hover:shadow-md transition"
         >
-          {/* ❌ Silme butonu */}
           {onRemove && (
             <button
               onClick={() => onRemove(book._id || book.id)}
-              className="absolute top-2 right-2 text-sm text-gray-400 hover:text-red-500 transition"
+              className="absolute bottom-2 right-2 text-sm text-gray-400 hover:text-red-500 transition"
               title="Remove book"
             >
               🗑️

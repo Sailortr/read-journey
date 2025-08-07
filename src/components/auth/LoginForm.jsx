@@ -4,6 +4,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useDispatch } from "react-redux";
 import { loginThunk } from "../../redux/thunks/authThunks";
+import { fetchLibraryBooks } from "../../redux/thunks/bookThunks";
 import { useNavigate, Link } from "react-router-dom";
 import { toast } from "react-toastify";
 
@@ -37,6 +38,7 @@ export default function LoginForm() {
   const onSubmit = async (data) => {
     try {
       await dispatch(loginThunk(data)).unwrap();
+      await dispatch(fetchLibraryBooks());
       navigate("/recommended");
     } catch (error) {
       toast.error(error.message || "Login failed");
@@ -50,7 +52,6 @@ export default function LoginForm() {
     >
       <div>
         <div className="mb-6">
-          <label className="block text-sm font-medium mb-1 text-gray-500"></label>
           <input
             {...register("email")}
             className="w-full px-4 py-3 rounded-lg bg-[#2e2e2e] placeholder-gray-300 text-white focus:outline-none"
@@ -63,7 +64,6 @@ export default function LoginForm() {
         </div>
 
         <div className="mb-6 relative">
-          <label className="block text-sm font-medium mb-1 text-gray-500"></label>
           <input
             {...register("password")}
             className="w-full px-4 py-3 pr-12 rounded-lg bg-[#2e2e2e] placeholder-gray-300 text-white focus:outline-none"

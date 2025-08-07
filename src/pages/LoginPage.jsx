@@ -8,9 +8,7 @@ import LoginForm from "../components/auth/LoginForm";
 export default function RegisterPage() {
   return (
     <div className="min-h-screen bg-black text-white flex flex-col md:flex-row">
-      {/* LEFT PANEL — Text + Form */}
       <div className="w-full md:w-1/2 flex flex-col justify-center items-center p-6 md:p-12 relative">
-        {/* LOGO: Mobilde sadece ikon, tablette-desktopta yazılı logo */}
         <img
           src={Logo}
           alt="Logo"
@@ -22,19 +20,16 @@ export default function RegisterPage() {
           className="hidden md:block absolute top-8 left-10 w-40"
         />
 
-        {/* METİN */}
         <h1 className="text-4xl md:text-5xl font-bold text-center mt-20 md:mt-10 mb-8 leading-tight">
           Expand your <br />
           mind, reading <span className="text-gray-400">a book</span>
         </h1>
 
-        {/* REGISTER FORM */}
         <div className="w-full max-w-sm">
           <LoginForm />
         </div>
       </div>
 
-      {/* RIGHT PANEL — iPhone Görseli */}
       <div className="hidden md:flex w-1/2 items-center justify-center bg-[#1a1a1a] p-6">
         <img
           src={Iphone}
@@ -43,7 +38,6 @@ export default function RegisterPage() {
         />
       </div>
 
-      {/* MOBİL iPHONE GÖRSELİ */}
       <div className="block md:hidden px-6 pb-10">
         <img src={IphoneMobil} alt="App Preview Mobile" className="w-full" />
       </div>

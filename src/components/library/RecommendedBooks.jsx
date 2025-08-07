@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import fallbackImg from "../../assets/placeholder-cover.png";
-import BookModal from "../books/BookModal"; // ✅ modal import
+import BookModal from "../books/BookModal";
 
 const RecommendedBooks = () => {
   const [books, setBooks] = useState([]);
-  const [selectedBook, setSelectedBook] = useState(null); // ✅ modal state
+  const [selectedBook, setSelectedBook] = useState(null);
 
   useEffect(() => {
     const fetchBooks = async () => {

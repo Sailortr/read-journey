@@ -1,9 +1,12 @@
 import { HiOutlineX } from "react-icons/hi";
-import fallbackImg from "../../assets/placeholder-cover.png";
+import fallbackImg from "../../assets/newbookimage.svg";
 import okIcon from "../../assets/ok.svg";
 import { useDispatch } from "react-redux";
 import { useState } from "react";
-import { addRecommendedBookToLibrary } from "../../redux/thunks/bookThunks"; // doğru thunk
+import {
+  addRecommendedBookToLibrary,
+  fetchLibraryBooks,
+} from "../../redux/thunks/bookThunks";
 
 const BookModal = ({ book, onClose }) => {
   const dispatch = useDispatch();
@@ -15,12 +18,13 @@ const BookModal = ({ book, onClose }) => {
 
   const handleAddToLibrary = async () => {
     try {
-      await dispatch(addRecommendedBookToLibrary(book._id)).unwrap(); // sadece ID gönderiyoruz
-      setSuccess(true);
+      await dispatch(addRecommendedBookToLibrary(book._id)).unwrap();
+      await dispatch(fetchLibraryBooks());
 
+      setSuccess(true);
       setTimeout(() => {
         setSuccess(false);
-        onClose(); // modal kapanıyor
+        onClose();
       }, 2000);
     } catch (error) {
       console.error("Kitap eklenemedi:", error.message);
@@ -38,7 +42,6 @@ const BookModal = ({ book, onClose }) => {
         onClick={(e) => e.stopPropagation()}
         className="relative bg-[#1C1C1C] text-white rounded-2xl shadow-xl w-full max-w-md p-6 mx-4 md:mx-0"
       >
-        {/* X Butonu */}
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-gray-400 hover:text-white text-2xl"
@@ -64,7 +67,7 @@ const BookModal = ({ book, onClose }) => {
         ) : (
           <div className="flex flex-col items-center">
             <img
-              src={book.imageUrl}
+              src={book.imageUrl || fallbackImg}
               alt={book.title}
               onError={handleImageError}
               className="w-32 h-48 object-cover rounded-md mb-4"

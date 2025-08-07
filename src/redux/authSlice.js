@@ -1,5 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { loginThunk, registerThunk, logoutThunk } from "./thunks/authThunks";
+import {
+  loginThunk,
+  registerThunk,
+  logoutThunk,
+  restoreUserFromLocalStorage,
+} from "./thunks/authThunks";
 
 const initialState = {
   user: null,
@@ -18,35 +23,41 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // REGISTER
+
       .addCase(registerThunk.pending, (state) => {
         state.isLoading = true;
       })
       .addCase(registerThunk.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.user = action.payload.user;
-        state.token = action.payload.token;
+        const { name, email, token } = action.payload;
+        state.user = { name, email };
+        state.token = token;
       })
       .addCase(registerThunk.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
       })
 
-      // LOGIN
       .addCase(loginThunk.pending, (state) => {
         state.isLoading = true;
       })
       .addCase(loginThunk.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.user = action.payload.user;
-        state.token = action.payload.token;
+        const { name, email, token } = action.payload;
+        state.user = { name, email };
+        state.token = token;
       })
       .addCase(loginThunk.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
       })
 
-      // LOGOUT
+      .addCase(restoreUserFromLocalStorage.fulfilled, (state, action) => {
+        const { name, email, token } = action.payload;
+        state.user = { name, email };
+        state.token = token;
+      })
+
       .addCase(logoutThunk.fulfilled, () => initialState);
   },
 });

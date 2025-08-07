@@ -1,4 +1,3 @@
-// src/components/reading/ReadingDiary.jsx
 import React from "react";
 
 const ReadingDiary = ({ diary, onDelete }) => {

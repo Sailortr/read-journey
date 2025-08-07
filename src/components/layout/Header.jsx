@@ -17,18 +17,27 @@ const Header = () => {
     localStorage.removeItem("user");
   };
 
+  const formatName = (nameOrEmail) => {
+    return nameOrEmail
+      ?.split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(" ");
+  };
+
+  const displayName = formatName(user?.name || user?.email || "User");
+  const avatarLetter = (user?.name || user?.email || "U")
+    .charAt(0)
+    .toUpperCase();
+
   const linkBase = "relative px-1 text-base transition-colors";
   const linkInactive = "text-gray-400 hover:text-white";
   const linkActive =
     "text-white after:content-[''] after:bg-[#6C8CFF] after:h-[3px] after:w-10 after:rounded-full after:absolute after:left-1/2 after:-translate-x-1/2 after:-bottom-2";
 
-  console.log("User from Redux:", user);
-
   return (
     <header className="w-full bg-black text-white">
       <div className="mx-auto max-w-[1310px] px-4 sm:px-6 lg:px-8 py-3">
         <div className="rounded-[15px] bg-[#1F1F1F] border border-[#2D2D2D] h-[74px] px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-          {/* Logo */}
           <div className="flex items-center gap-2 min-w-0">
             <img
               src={logo}
@@ -40,7 +49,6 @@ const Header = () => {
             </span>
           </div>
 
-          {/* Orta – Navigasyon (≥ md) */}
           <nav className="hidden md:flex flex-1 justify-center items-center gap-8">
             <NavLink
               to="/recommended"
@@ -50,7 +58,6 @@ const Header = () => {
             >
               Home
             </NavLink>
-
             <NavLink
               to="/library"
               className={({ isActive }) =>
@@ -60,30 +67,19 @@ const Header = () => {
               My library
             </NavLink>
           </nav>
-
-          {/* Sağ – Kullanıcı + Logout */}
           <div className="flex items-center gap-3">
-            {/* Avatar (ilk harf) */}
             <div className="h-[42px] w-[42px] rounded-full border border-[#4B4B4B] flex items-center justify-center text-white font-semibold text-lg">
-              {(user?.name || user?.email || "U").charAt(0).toUpperCase()}
+              {avatarLetter}
             </div>
-
-            {/* Kullanıcı adı veya e-posta */}
-            {(user?.name || user?.email) && (
-              <span className="hidden md:inline text-sm text-white font-medium truncate max-w-[120px]">
-                {(user?.name || user?.email).toUpperCase()}
-              </span>
-            )}
-
-            {/* Log out */}
+            <span className="hidden md:inline text-sm text-white font-medium truncate max-w-[120px]">
+              {displayName}
+            </span>
             <button
               onClick={handleLogout}
               className="hidden md:inline-flex h-[42px] items-center rounded-full border border-[#4B4B4B] px-6 text-[15px] hover:bg-[#242424] transition"
             >
               Log out
             </button>
-
-            {/* Hamburger (mobil) */}
             <button
               onClick={() => setOpen(true)}
               className="md:hidden text-3xl"
@@ -94,8 +90,6 @@ const Header = () => {
           </div>
         </div>
       </div>
-
-      {/* Mobil menü */}
       {open && (
         <>
           <div

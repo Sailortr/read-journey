@@ -11,7 +11,6 @@ const BookList = ({ books, onBookClick, page, setPage, totalPages }) => {
       className="space-y-6 bg-[#1F1F1F] rounded-[30px] p-6
       border border-[#262626]"
     >
-      {/* Başlık ve pagination */}
       <div className="flex items-center justify-between">
         <h2 className="text-xl sm:text-2xl font-bold text-white">
           Recommended
@@ -39,8 +38,6 @@ const BookList = ({ books, onBookClick, page, setPage, totalPages }) => {
           </button>
         </div>
       </div>
-
-      {/* Kitap Grid */}
       <div
         className="grid gap-x-6 gap-y-20
         grid-cols-2

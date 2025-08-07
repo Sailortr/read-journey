@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from "react";
 
 export default function FilterForm({ filters = {}, onChange }) {
-  // Formu lokal state ile kontrol ediyoruz
   const [localFilters, setLocalFilters] = useState({
     title: filters.title || "",
     author: filters.author || "",
   });
 
-  // Dışarıdan gelen filters değişirse formu senkronla
   useEffect(() => {
     setLocalFilters({
       title: filters.title || "",
@@ -15,22 +13,19 @@ export default function FilterForm({ filters = {}, onChange }) {
     });
   }, [filters.title, filters.author]);
 
-  // Yazdıkça lokal state'i güncelle
   const handleChange = (e) => {
     const { name, value } = e.target;
     setLocalFilters((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Kullanıcı yazmayı bıraktıktan 300ms sonra onChange çağır
   useEffect(() => {
     const t = setTimeout(() => {
       onChange?.(localFilters);
-    }, 300000); // debounce süresi
+    }, 300000);
 
     return () => clearTimeout(t);
   }, [localFilters, onChange]);
 
-  // Butona basılırsa hemen uygula
   const handleSubmit = (e) => {
     e.preventDefault();
     onChange?.(localFilters);
@@ -39,7 +34,7 @@ export default function FilterForm({ filters = {}, onChange }) {
   const handleClear = () => {
     const cleared = { title: "", author: "" };
     setLocalFilters(cleared);
-    onChange?.(cleared); // hemen temiz filtre gönder
+    onChange?.(cleared);
   };
 
   return (

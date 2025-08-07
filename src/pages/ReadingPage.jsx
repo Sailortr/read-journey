@@ -1,4 +1,3 @@
-// src/pages/ReadingPage.jsx
 import SidebarContent from "../components/layout/SidebarContent";
 import DashboardPanel from "../components/dashboard/DashboardPanel";
 import ReadingForm from "../components/reading/ReadingForm";

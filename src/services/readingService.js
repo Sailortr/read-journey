@@ -1,4 +1,4 @@
-import api from "./api"; // ✅ doğru yol, servis dosyasındasın
+import api from "./api";
 
 const readingService = {
   startReading: async ({ bookId, page }) => {
@@ -26,4 +26,4 @@ const readingService = {
   },
 };
 
-export default readingService; // ✅ burada default export yapıyoruz
+export default readingService;

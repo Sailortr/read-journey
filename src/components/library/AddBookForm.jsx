@@ -1,18 +1,31 @@
 // src/components/library/AddBookForm.jsx
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { toast } from "react-toastify";
+import {
+  addBookToLibraryThunk,
+  fetchLibraryBooks,
+} from "../../redux/thunks/bookThunks";
 
 const AddBookForm = () => {
-  const [form, setForm] = useState({ title: "", author: "", pages: "" });
+  const dispatch = useDispatch();
+  const [form, setForm] = useState({ title: "", author: "", totalPages: "" });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Book added:", form);
-    setForm({ title: "", author: "", pages: "" });
+    try {
+      await dispatch(addBookToLibraryThunk(form)).unwrap();
+      dispatch(fetchLibraryBooks());
+      toast.success("Kitap başarıyla eklendi!");
+      setForm({ title: "", author: "", totalPages: "" });
+    } catch (err) {
+      toast.error(err || "Kitap eklenemedi!");
+    }
   };
 
   return (
@@ -37,8 +50,8 @@ const AddBookForm = () => {
       />
       <input
         type="number"
-        name="pages"
-        value={form.pages}
+        name="totalPages"
+        value={form.totalPages}
         onChange={handleChange}
         placeholder="Number of pages"
         required
@@ -46,7 +59,7 @@ const AddBookForm = () => {
       />
       <button
         type="submit"
-        className="mt-2 px-5 py-2 text-sm rounded-full border border-white text-white hover:bg-white hover:text-black transition"
+        className="mt-6 px-2 py-2 text-sm rounded-full border border-white text-white hover:bg-white hover:text-black transition"
       >
         Add book
       </button>

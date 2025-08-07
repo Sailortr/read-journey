@@ -1,4 +1,3 @@
-// src/components/books/BookCard.jsx
 import fallbackImg from "../../assets/placeholder-cover.png";
 
 const BookCard = ({ book, onClick }) => {
