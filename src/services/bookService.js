@@ -8,10 +8,10 @@ const getRecommendedBooks = async (options = {}) => {
 };
 
 const getLibraryBooks = async () => {
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("accessToken");
   if (!token) throw new Error("Token bulunamadı!");
 
-  const { data } = await api.get("/books/user");
+  const { data } = await api.get("/books/own");
   return data;
 };
 
@@ -22,6 +22,7 @@ const addBookToLibrary = async (bookData) => {
 
 const deleteBookFromLibrary = async (bookId) => {
   await api.delete(`/books/remove/${bookId}`);
+  console.log("Kitap eklendi mi?", data);
 };
 
 const getBookDetail = async (id) => {
@@ -29,14 +30,15 @@ const getBookDetail = async (id) => {
   return data;
 };
 
+const removeBookFromLibrary = async (bookId) => {
+  await api.delete(`/books/remove/${bookId}`);
+};
+
 export {
   getRecommendedBooks,
   getLibraryBooks,
   addBookToLibrary,
   deleteBookFromLibrary,
+  removeBookFromLibrary,
   getBookDetail,
 };
-
-export const addRecommendedBookToLibrary = (id) => api.post(`/books/add/${id}`);
-
-export const removeBookFromLibrary = (id) => api.delete(`/books/${id}`);

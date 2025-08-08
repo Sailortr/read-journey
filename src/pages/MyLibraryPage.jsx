@@ -3,7 +3,10 @@ import AddBookForm from "../components/library/AddBookForm";
 import RecommendedBooks from "../components/library/RecommendedBooks";
 import LibraryList from "../components/library/LibraryList";
 import FilterDropdown from "../components/library/FilterDropdown";
-import { removeBookFromLibrary } from "../redux/thunks/bookThunks";
+import {
+  removeBookFromLibrary,
+  fetchLibraryBooks,
+} from "../redux/thunks/bookThunks";
 
 const MyLibraryPage = () => {
   const dispatch = useDispatch();
@@ -11,7 +14,8 @@ const MyLibraryPage = () => {
 
   const handleRemoveBook = async (id) => {
     try {
-      await dispatch(removeBookFromLibrary(id)).unwrap();
+      await dispatch(removeBookFromLibrary(id));
+      await dispatch(fetchLibraryBooks()); 
     } catch (error) {
       console.error("Kitap silinemedi:", error.message);
     }
@@ -34,7 +38,8 @@ const MyLibraryPage = () => {
           <h2 className="text-white text-2xl font-semibold">My library</h2>
           <FilterDropdown />
         </div>
-        <LibraryList books={books} onRemove={handleRemoveBook} />{" "}
+
+        <LibraryList books={books} onRemove={handleRemoveBook} />
       </section>
     </div>
   );

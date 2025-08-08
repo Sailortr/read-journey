@@ -42,11 +42,19 @@ const bookSlice = createSlice({
       })
 
       .addCase(removeBookFromLibrary.fulfilled, (state, action) => {
-        state.books = state.books.filter((book) => book._id !== action.payload);
+        state.books = state.books.filter(
+          (book) => (book._id || book.id) !== action.payload
+        );
       })
 
       .addCase(addRecommendedBookToLibrary.fulfilled, (state, action) => {
-        state.books.push(action.payload);
+        if (!state.books) {
+          state.books = [];
+        }
+
+        if (action.payload) {
+          state.books.push(action.payload);
+        }
       })
 
       .addCase(logoutThunk.fulfilled, (state) => {

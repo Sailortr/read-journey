@@ -1,8 +1,24 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import * as bookService from "../../services/bookService";
+import api from "../../services/api";
+
+export const fetchLibraryBooks = createAsyncThunk(
+  "books/fetchLibraryBooks",
+  async (_, thunkAPI) => {
+    try {
+      const response = await bookService.getLibraryBooks();
+      return response;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Kitaplar alınamadı"
+      );
+    }
+  }
+);
 
 export const fetchRecommendedBooks = createAsyncThunk(
   "books/fetchRecommendedBooks",
+
   async (_, thunkAPI) => {
     try {
       const response = await bookService.getRecommendedBooks();
@@ -15,15 +31,22 @@ export const fetchRecommendedBooks = createAsyncThunk(
   }
 );
 
-export const fetchLibraryBooks = createAsyncThunk(
-  "books/fetchLibraryBooks",
-  async (_, thunkAPI) => {
+export const addRecommendedBookToLibrary = createAsyncThunk(
+  "books/addRecommendedBookToLibrary",
+  async (bookId, thunkAPI) => {
     try {
-      const response = await bookService.getLibraryBooks();
+      const response = await api.post(`/books/add/${bookId}`);
+
+      if (!response || !response.data || !response.data._id) {
+        return thunkAPI.rejectWithValue(
+          "Sunucudan beklenen kitap verisi gelmedi."
+        );
+      }
+
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data?.message || "Kitaplar alınamadı"
+        error.response?.data?.message || "Hata oluştu."
       );
     }
   }
@@ -43,25 +66,11 @@ export const addBookToLibraryThunk = createAsyncThunk(
   }
 );
 
-export const addRecommendedBookToLibrary = createAsyncThunk(
-  "books/addRecommendedBookToLibrary",
-  async (bookId, thunkAPI) => {
-    try {
-      const response = await bookService.addRecommendedBookToLibrary(bookId);
-      return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(
-        error.response?.data?.message || "Tavsiye edilen kitap eklenemedi"
-      );
-    }
-  }
-);
-
 export const removeBookFromLibrary = createAsyncThunk(
   "books/removeBookFromLibrary",
   async (bookId, thunkAPI) => {
     try {
-      await bookService.removeBookFromLibrary(bookId);
+      await bookService.deleteBookFromLibrary(bookId);
       return bookId;
     } catch (error) {
       return thunkAPI.rejectWithValue(

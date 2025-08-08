@@ -19,7 +19,6 @@ const BookModal = ({ book, onClose }) => {
   const handleAddToLibrary = async () => {
     try {
       await dispatch(addRecommendedBookToLibrary(book._id)).unwrap();
-      await dispatch(fetchLibraryBooks());
 
       setSuccess(true);
       setTimeout(() => {
