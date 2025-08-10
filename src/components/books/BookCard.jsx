@@ -5,17 +5,14 @@ const BookCard = ({ book, onClick }) => {
   const { title, author, imageUrl } = book || {};
   const containerRef = useRef(null);
 
-  // Görünürlük ve yükleme durumları
   const [isVisible, setIsVisible] = useState(false);
   const [imgLoaded, setImgLoaded] = useState(false);
   const [src, setSrc] = useState(fallbackImg);
 
-  // Kart viewport'a girdiğinde gerçek görseli yükle
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
 
-    // Tarayıcı desteklemiyorsa: graceful degradation
     if (!("IntersectionObserver" in window)) {
       setIsVisible(true);
       return;
@@ -29,14 +26,13 @@ const BookCard = ({ book, onClick }) => {
           observer.disconnect();
         }
       },
-      { root: null, rootMargin: "200px 0px", threshold: 0.01 } // önden 200px preload
+      { root: null, rootMargin: "200px 0px", threshold: 0.01 }
     );
 
     observer.observe(el);
     return () => observer.disconnect();
   }, []);
 
-  // Görünür olduğunda gerçek kaynağı ata
   useEffect(() => {
     if (isVisible) {
       setSrc(imageUrl || fallbackImg);
@@ -58,7 +54,6 @@ const BookCard = ({ book, onClick }) => {
                  shadow-md hover:shadow-lg hover:scale-[1.03] transition duration-300 ease-in-out"
       title={title}
     >
-      {/* Görsel */}
       <img
         src={src}
         alt={title || "Book cover"}
@@ -70,11 +65,9 @@ const BookCard = ({ book, onClick }) => {
                     transition-opacity duration-300 ease-in-out
                     ${imgLoaded ? "opacity-100" : "opacity-0"} 
                     ${!imgLoaded ? "blur-sm" : "blur-0"}`}
-        // responsive ipucu: bu kart sabit genişlikteyse çok kritik değil ama ekledim
         sizes="137px"
       />
 
-      {/* Metin alanı */}
       <div className="px-2 pt-2 text-center space-y-1">
         <h3
           className="truncate font-bold text-[14px] leading-[18px] tracking-[-0.02em] text-[#F9F9F9]"
@@ -90,7 +83,6 @@ const BookCard = ({ book, onClick }) => {
         </p>
       </div>
 
-      {/* Skeleton (görsel yüklenene kadar) */}
       {(!isVisible || !imgLoaded) && (
         <div
           className="absolute inset-0 pointer-events-none"
