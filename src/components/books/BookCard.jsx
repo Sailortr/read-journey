@@ -1,25 +1,80 @@
+import { useEffect, useRef, useState } from "react";
 import fallbackImg from "../../assets/placeholder-cover.png";
 
 const BookCard = ({ book, onClick }) => {
-  const { title, author, imageUrl } = book;
+  const { title, author, imageUrl } = book || {};
+  const containerRef = useRef(null);
+
+  // Görünürlük ve yükleme durumları
+  const [isVisible, setIsVisible] = useState(false);
+  const [imgLoaded, setImgLoaded] = useState(false);
+  const [src, setSrc] = useState(fallbackImg);
+
+  // Kart viewport'a girdiğinde gerçek görseli yükle
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    // Tarayıcı desteklemiyorsa: graceful degradation
+    if (!("IntersectionObserver" in window)) {
+      setIsVisible(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
+      },
+      { root: null, rootMargin: "200px 0px", threshold: 0.01 } // önden 200px preload
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  // Görünür olduğunda gerçek kaynağı ata
+  useEffect(() => {
+    if (isVisible) {
+      setSrc(imageUrl || fallbackImg);
+    }
+  }, [isVisible, imageUrl]);
 
   const handleImageError = (e) => {
-    e.target.src = fallbackImg;
+    if (e.currentTarget.src !== fallbackImg) {
+      e.currentTarget.src = fallbackImg;
+    }
+    setImgLoaded(true);
   };
 
   return (
     <div
-      onClick={() => onClick(book)}
-      className="w-[137px] h-[248px] cursor-pointer bg-[#1C1C1C] rounded-2xl overflow-hidden 
-      shadow-md hover:shadow-lg hover:scale-[1.03] 
-      transition duration-300 ease-in-out"
+      ref={containerRef}
+      onClick={() => onClick?.(book)}
+      className="relative w-[137px] h-[248px] cursor-pointer bg-[#1C1C1C] rounded-2xl overflow-hidden 
+                 shadow-md hover:shadow-lg hover:scale-[1.03] transition duration-300 ease-in-out"
+      title={title}
     >
+      {/* Görsel */}
       <img
-        src={imageUrl || fallbackImg}
-        alt={title}
+        src={src}
+        alt={title || "Book cover"}
+        loading="lazy"
+        decoding="async"
+        onLoad={() => setImgLoaded(true)}
         onError={handleImageError}
-        className="w-[137px] h-[200px] object-cover rounded-t-2xl"
+        className={`w-[137px] h-[200px] object-cover rounded-t-2xl
+                    transition-opacity duration-300 ease-in-out
+                    ${imgLoaded ? "opacity-100" : "opacity-0"} 
+                    ${!imgLoaded ? "blur-sm" : "blur-0"}`}
+        // responsive ipucu: bu kart sabit genişlikteyse çok kritik değil ama ekledim
+        sizes="137px"
       />
+
+      {/* Metin alanı */}
       <div className="px-2 pt-2 text-center space-y-1">
         <h3
           className="truncate font-bold text-[14px] leading-[18px] tracking-[-0.02em] text-[#F9F9F9]"
@@ -34,6 +89,20 @@ const BookCard = ({ book, onClick }) => {
           {author}
         </p>
       </div>
+
+      {/* Skeleton (görsel yüklenene kadar) */}
+      {(!isVisible || !imgLoaded) && (
+        <div
+          className="absolute inset-0 pointer-events-none"
+          aria-hidden="true"
+        >
+          <div className="w-[137px] h-[200px] bg-[#2A2A2A] animate-pulse rounded-t-2xl" />
+          <div className="px-2 pt-2">
+            <div className="h-[14px] w-[90%] bg-[#2A2A2A] rounded animate-pulse mb-1" />
+            <div className="h-[10px] w-[70%] bg-[#2A2A2A] rounded animate-pulse" />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
