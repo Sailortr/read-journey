@@ -1,38 +1,66 @@
-import React from "react";
+const fmt = (d) =>
+  new Date(d).toLocaleDateString(undefined, {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
 
-const ReadingDiary = ({ diary, onDelete }) => {
-  if (!diary?.length) {
-    return <p className="text-gray-400">No reading history yet.</p>;
+const ReadingDiary = ({ entries = [], totalPages = 0, onDelete }) => {
+  if (!entries.length) {
+    return (
+      <div className="mt-4 text-sm text-white/50">
+        No sessions yet. Start recording to see your progress.
+      </div>
+    );
   }
 
   return (
-    <div className="mt-6">
-      <h4 className="text-lg font-bold mb-2 text-white">📖 Reading Diary</h4>
-      <ul className="space-y-2">
-        {diary.map((entry) => (
+    <ul className="mt-4 space-y-3">
+      {entries.map((s) => {
+        const pct = totalPages
+          ? Math.min(100, Math.round((s.pagesRead / totalPages) * 100))
+          : 0;
+        return (
           <li
-            key={entry.id}
-            className="bg-[#2A2A2A] text-white px-4 py-2 rounded-md flex justify-between items-center"
+            key={s.id}
+            className="p-3 bg-black/30 rounded-2xl border border-white/10 flex items-center gap-3"
           >
-            <div>
-              <p>
-                <strong>Date:</strong> {entry.date}
-              </p>
-              <p>
-                <strong>Pages:</strong> {entry.pages}, <strong>Time:</strong>{" "}
-                {entry.minutes} min
-              </p>
+            <div className="flex-1">
+              <div className="flex items-center justify-between">
+                <span className="text-white font-medium">{fmt(s.date)}</span>
+                <span className="text-white/60 text-xs">
+                  {s.pagesRead} pages
+                </span>
+              </div>
+
+              <div className="mt-1 text-white/70 text-xs flex gap-4">
+                <span>{pct}%</span>
+                <span>{s.minutes} min</span>
+                <span>{s.pagesPerHour} pages/hr</span>
+              </div>
+
+              <div className="mt-2 h-1.5 rounded-full bg-white/10 overflow-hidden">
+                <div
+                  className="h-full bg-green-500"
+                  style={{ width: `${Math.max(4, pct)}%` }}
+                />
+              </div>
             </div>
-            <button
-              onClick={() => onDelete(entry.id)}
-              className="text-red-400 hover:text-red-600"
-            >
-              Delete
-            </button>
+
+            {onDelete && (
+              <button
+                onClick={() => onDelete(s.id)}
+                className="shrink-0 w-7 h-7 grid place-items-center rounded-full border border-white/15 text-white/70 hover:border-white/30 hover:text-white transition"
+                title="Delete session"
+                aria-label="Delete session"
+              >
+                🗑️
+              </button>
+            )}
           </li>
-        ))}
-      </ul>
-    </div>
+        );
+      })}
+    </ul>
   );
 };
 

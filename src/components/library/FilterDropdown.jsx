@@ -1,43 +1,65 @@
-import { useState } from "react";
-import { FaChevronDown } from "react-icons/fa";
+import { useEffect, useRef, useState } from "react";
 
-const options = ["Unread", "In progress", "Done", "All books"];
+const OPTIONS = [
+  { key: "unread", label: "Unread" },
+  { key: "in-progress", label: "In progress" },
+  { key: "done", label: "Done" },
+  { key: "all", label: "All books" },
+];
 
-const FilterDropdown = ({ selected = "All books", onChange = () => {} }) => {
+export default function FilterDropdown({ value = "all", onChange }) {
   const [open, setOpen] = useState(false);
+  const ref = useRef(null);
 
-  const handleSelect = (option) => {
-    onChange(option);
-    setOpen(false);
-  };
+  useEffect(() => {
+    const onDoc = (e) =>
+      ref.current && !ref.current.contains(e.target) && setOpen(false);
+    document.addEventListener("mousedown", onDoc);
+    return () => document.removeEventListener("mousedown", onDoc);
+  }, []);
+
+  const current = OPTIONS.find((o) => o.key === value) || OPTIONS[3];
 
   return (
-    <div className="relative w-[153px]">
+    <div ref={ref} className="relative">
       <button
-        onClick={() => setOpen(!open)}
-        className="w-full h-[46px] flex items-center justify-between bg-[#1F1F1F] text-white text-sm px-4 border border-[#2D2D2D] rounded-lg focus:outline-none"
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        className="w-44 px-4 py-2 rounded-2xl bg-[#1F1F1F] text-white
+                   border border-white/10 hover:border-white/20
+                   flex items-center justify-between"
+        aria-haspopup="listbox"
+        aria-expanded={open}
       >
-        {selected}
-        <FaChevronDown className="ml-2 text-xs" />
+        <span className="truncate">{current.label}</span>
+        <span className={`transition ${open ? "rotate-180" : ""}`}>▾</span>
       </button>
 
       {open && (
-        <ul className="absolute z-10 w-full bg-[#1F1F1F] mt-2 rounded-xl border border-[#2D2D2D] shadow-lg text-sm text-gray-300 overflow-hidden">
-          {options.map((option) => (
-            <li
-              key={option}
-              onClick={() => handleSelect(option)}
-              className={`px-4 py-2 cursor-pointer hover:bg-[#2A2A2A] transition ${
-                selected === option ? "text-white font-semibold" : ""
-              }`}
+        <div
+          role="listbox"
+          className="absolute z-20 mt-2 w-48 rounded-2xl bg-[#181818]
+                     border border-white/10 shadow-lg py-2"
+        >
+          {OPTIONS.map((opt) => (
+            <button
+              key={opt.key}
+              role="option"
+              aria-selected={value === opt.key}
+              onClick={() => {
+                onChange?.(opt.key);
+                setOpen(false);
+              }}
+              className={`w-full text-left px-4 py-2 text-white hover:bg-white/5 transition
+                         ${
+                           value === opt.key ? "font-semibold" : "text-white/90"
+                         }`}
             >
-              {option}
-            </li>
+              {opt.label}
+            </button>
           ))}
-        </ul>
+        </div>
       )}
     </div>
   );
-};
-
-export default FilterDropdown;
+}

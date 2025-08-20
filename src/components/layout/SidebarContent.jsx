@@ -3,14 +3,13 @@ import { Link } from "react-router-dom";
 import { HiArrowRight } from "react-icons/hi";
 import FilterForm from "../dashboard/FilterForm";
 
-// SVG ikonları
 import step1Icon from "../../assets/1.svg";
 import step2Icon from "../../assets/2.svg";
-import booksIcon from "../../assets/books.svg"; // ✅ yeni eklendi
+import booksIcon from "../../assets/books.svg";
 
 const SidebarContent = ({ filters, onFilterChange }) => {
   return (
-    <aside className="w-full lg:w-[353px] shrink-0 bg-black">
+    <aside className="w-full lg:w-[353px] shrink-0 bg-[#1F1F1F] rounded-[30px]">
       <div className="flex flex-col gap-6 rounded-[30px] bg-[#1F1F1F] p-4 sm:p-6">
         <section className="rounded-[24px] bg-[#1F1F1F] border border-[#262626] p-4 sm:p-5">
           <h3 className="text-xs tracking-wide text-gray-300 mb-3">Filters:</h3>
