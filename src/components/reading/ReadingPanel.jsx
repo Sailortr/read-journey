@@ -1,4 +1,9 @@
-const ReadingPanel = ({ book, isRecording, onRecordClick }) => {
+const ReadingPanel = ({
+  book,
+  isRecording,
+  onRecordClick,
+  disabled = false,
+}) => {
   if (!book) return null;
 
   return (
@@ -16,11 +21,16 @@ const ReadingPanel = ({ book, isRecording, onRecordClick }) => {
 
       <button
         onClick={onRecordClick}
+        disabled={disabled}
         aria-pressed={isRecording}
         aria-label={isRecording ? "Stop recording" : "Start recording"}
         title={isRecording ? "Stop" : "Start"}
-        className="mt-6 w-12 h-12 rounded-full border-4 border-white/20 grid place-items-center
-                   hover:border-white/40 transition"
+        className={`mt-6 w-12 h-12 rounded-full border-4 border-white/20 grid place-items-center transition
+                    ${
+                      disabled
+                        ? "opacity-60 cursor-not-allowed"
+                        : "hover:border-white/40"
+                    }`}
       >
         {isRecording ? (
           <span className="block w-6 h-6 rounded-[6px] bg-red-600" />

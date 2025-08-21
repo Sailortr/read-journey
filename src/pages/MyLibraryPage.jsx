@@ -1,3 +1,4 @@
+// src/pages/MyLibraryPage.jsx
 import { useSelector, useDispatch } from "react-redux";
 import { useMemo, useState, useEffect } from "react";
 import AddBookForm from "../components/library/AddBookForm";
@@ -17,6 +18,9 @@ import readingService from "../services/readingService";
 const ITEMS_PER_PAGE = 10;
 const apiStatusFor = (filter) => (filter === "all" ? undefined : filter);
 
+const norm = (v, fallback = 1) =>
+  Math.max(1, Number.parseInt(v, 10) || fallback);
+
 const MyLibraryPage = () => {
   const dispatch = useDispatch();
   const books = useSelector((s) => s.books.books) || [];
@@ -28,6 +32,7 @@ const MyLibraryPage = () => {
 
   const [page, setPage] = useState(1);
   useEffect(() => setPage(1), [filter]);
+
   const totalPages = Math.max(1, Math.ceil(books.length / ITEMS_PER_PAGE));
   const pagedBooks = useMemo(() => {
     const start = (page - 1) * ITEMS_PER_PAGE;
@@ -54,8 +59,9 @@ const MyLibraryPage = () => {
   const [readingBook, setReadingBook] = useState(null);
 
   const [isRecording, setIsRecording] = useState(false);
-  const [startPageVal, setStartPageVal] = useState(0);
-  const [stopPageVal, setStopPageVal] = useState(0);
+  const [busy, setBusy] = useState(false);
+  const [startPageVal, setStartPageVal] = useState(1);
+  const [stopPageVal, setStopPageVal] = useState(1);
 
   const [activeSessions, setActiveSessions] = useState([]);
   const [timeLeftText, setTimeLeftText] = useState("");
@@ -66,9 +72,7 @@ const MyLibraryPage = () => {
       const sessions = Array.isArray(b.progress) ? b.progress : [];
 
       const parsed = sessions
-        .filter(
-          (s) => Number.isFinite(s.startPage) && Number.isFinite(s.finishPage)
-        )
+        .filter((s) => Number.isFinite(s.startPage))
         .map((s) => {
           const startAt = s.startReading ? new Date(s.startReading) : null;
           const finishAt = s.finishReading ? new Date(s.finishReading) : null;
@@ -78,14 +82,14 @@ const MyLibraryPage = () => {
               : 0;
           const pagesRead = Math.max(
             0,
-            (s.finishPage ?? 0) - (s.startPage ?? 0)
+            (s.finishPage ?? s.startPage ?? 0) - (s.startPage ?? 0)
           );
           const pph = minutes ? Math.round(pagesRead / (minutes / 60)) : 0;
           return {
             id: `${s._id || `${s.startReading}-${s.finishReading}`}`,
             date: s.finishReading || s.startReading || new Date().toISOString(),
-            startPage: s.startPage ?? 0,
-            stopPage: s.finishPage ?? s.startPage ?? 0,
+            startPage: s.startPage ?? 1,
+            stopPage: s.finishPage ?? s.startPage ?? 1,
             pagesRead,
             minutes,
             pagesPerHour: pph,
@@ -95,7 +99,7 @@ const MyLibraryPage = () => {
 
       setActiveSessions(parsed);
 
-      const lastStop = parsed[0]?.stopPage ?? 0;
+      const lastStop = norm(parsed[0]?.stopPage ?? 1, 1);
       setStartPageVal(lastStop);
       setStopPageVal(lastStop);
 
@@ -125,37 +129,37 @@ const MyLibraryPage = () => {
   const enterReadingMode = async (book) => {
     setReadingBook(book);
     setModalBook(null);
-    await refreshActiveBook(getBookId(book));
     setIsRecording(false);
+    setBusy(false);
+    await refreshActiveBook(getBookId(book));
   };
 
   const onRecordClick = async () => {
-    if (!readingBook) return;
+    if (!readingBook || busy) return;
     const id = getBookId(readingBook);
 
-    if (!isRecording) {
-      try {
+    try {
+      setBusy(true);
+
+      if (!isRecording) {
+        const start = norm(startPageVal, 1);
+        setStartPageVal(start);
+        setStopPageVal(start);
+        await readingService.startReading({ id, page: start });
         setIsRecording(true);
-        await readingService.startReading({
-          id,
-          page: Number(startPageVal) || 0,
-        });
-      } catch (e) {
-        console.error("Start failed:", e?.message);
-        setIsRecording(false);
-      }
-    } else {
-      try {
-        setIsRecording(false);
-        await readingService.finishReading({
-          id,
-          page: Number(stopPageVal) || 0,
-        });
         await refreshActiveBook(id);
-      } catch (e) {
-        console.error("Finish failed:", e?.message);
-        setIsRecording(true);
+      } else {
+        const start = norm(startPageVal, 1);
+        const stop = Math.max(start, norm(stopPageVal, start));
+        setStopPageVal(stop);
+        await readingService.finishReading({ id, page: stop });
+        setIsRecording(false);
+        await refreshActiveBook(id);
       }
+    } catch (e) {
+      console.error("Record error:", e?.message);
+    } finally {
+      setBusy(false);
     }
   };
 
@@ -175,8 +179,8 @@ const MyLibraryPage = () => {
             stopPage={stopPageVal}
             onChangeStartPage={setStartPageVal}
             onChangeStopPage={setStopPageVal}
-            onStart={() => !isRecording && onRecordClick()}
-            onStop={() => isRecording && onRecordClick()}
+            onStart={onRecordClick}
+            onStop={onRecordClick}
             sessions={activeSessions}
             totalPages={readingBook?.totalPages || 0}
             stats={{
@@ -185,7 +189,7 @@ const MyLibraryPage = () => {
               avgSpeed: (() => {
                 const tp = activeSessions.reduce((a, s) => a + s.pagesRead, 0);
                 const tm = activeSessions.reduce((a, s) => a + s.minutes, 0);
-                return tm ? +(tp / tm).toFixed(2) : 0; // pages/min
+                return tm ? +(tp / tm).toFixed(2) : 0;
               })(),
               percentage: (() => {
                 const tp = activeSessions.reduce((a, s) => a + s.pagesRead, 0);
@@ -194,6 +198,7 @@ const MyLibraryPage = () => {
                   : 0;
               })(),
             }}
+            busy={busy}
           />
         ) : (
           <>
@@ -326,6 +331,7 @@ const MyLibraryPage = () => {
             book={readingBook}
             isRecording={isRecording}
             onRecordClick={onRecordClick}
+            disabled={busy}
           />
         )}
       </section>

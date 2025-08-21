@@ -12,7 +12,7 @@ const finishReading = async ({ id, page }) => {
 
 const getBookDetails = async (id) => {
   const { data } = await api.get(`/books/${id}`);
-  return data; // { _id, progress: [...], timeLeftToRead?, totalPages, ... }
+  return data;
 };
 
 const deleteReading = async ({ bookId, readingId }) => {

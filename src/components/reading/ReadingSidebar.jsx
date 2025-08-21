@@ -1,6 +1,6 @@
 import starIcon from "../../assets/star.svg";
 import ReadingDiary from "./ReadingDiary";
-import ReadingStats from "./ReadingStats"; // ⬅️ ekle
+import ReadingStats from "./ReadingStats";
 
 const ReadingSidebar = ({
   isRecording,
@@ -13,6 +13,7 @@ const ReadingSidebar = ({
   sessions = [],
   totalPages = 0,
   stats,
+  busy = false,
 }) => {
   return (
     <div className="w-full lg:w-[353px] flex-shrink-0 rounded-[30px]">
@@ -23,14 +24,14 @@ const ReadingSidebar = ({
 
         <input
           type="number"
-          min={0}
+          min={1}
           value={isRecording ? stopPage : startPage}
           onChange={(e) =>
             (isRecording ? onChangeStopPage : onChangeStartPage)?.(
-              Number(e.target.value || 0)
+              Number(e.target.value || 1)
             )
           }
-          placeholder="Page number"
+          placeholder="1"
           className="w-full bg-[#1C1C1C] text-white placeholder-white/40 text-sm
                      px-4 py-3 rounded-2xl border border-white/10
                      hover:border-white/20 focus:border-white/40
@@ -42,11 +43,15 @@ const ReadingSidebar = ({
 
         <button
           onClick={isRecording ? onStop : onStart}
-          className="mt-4 inline-flex items-center justify-center
+          disabled={busy}
+          className={`mt-4 inline-flex items-center justify-center
                      px-4 py-2 text-sm font-medium rounded-full
-                     border border-white/20 text-white
-                     hover:border-white/40 hover:bg-white/10
-                     active:bg-white/15 transition"
+                     border border-white/20 text-white transition
+                     ${
+                       busy
+                         ? "opacity-60 cursor-not-allowed"
+                         : "hover:border-white/40 hover:bg-white/10 active:bg-white/15"
+                     }`}
         >
           {isRecording ? "To stop" : "To start"}
         </button>
@@ -70,7 +75,6 @@ const ReadingSidebar = ({
       <div className="mt-6 bg-[#1F1F1F] p-6 rounded-[30px] border border-white/10">
         <div className="flex items-center justify-between">
           <h4 className="text-white text-base font-semibold">Diary</h4>
-          <img src={starIcon} alt="" className="w-5 h-5 opacity-80" />
         </div>
         <ReadingDiary entries={sessions} totalPages={totalPages} />
       </div>
