@@ -8,6 +8,21 @@ import {
   addRecommendedBookToLibrary,
 } from "./thunks/bookThunks";
 
+const norm = (s) => (s || "").trim().toLowerCase();
+const sameBook = (a, b) => {
+  const idA = a._id || a.id || a.bookId || a.slug;
+  const idB = b._id || b.id || b.bookId || b.slug;
+  if (idA && idB && String(idA) === String(idB)) return true;
+
+  return norm(a.title) === norm(b.title) && norm(a.author) === norm(b.author);
+};
+
+const dedupePush = (arr, book) => {
+  if (!book) return;
+  const exists = arr.some((it) => sameBook(it, book));
+  if (!exists) arr.push(book);
+};
+
 const initialState = {
   recommendedBooks: [],
   books: [],
@@ -21,11 +36,14 @@ const bookSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
+
       .addCase(fetchRecommendedBooks.pending, (state) => {
         state.isLoading = true;
       })
       .addCase(fetchRecommendedBooks.fulfilled, (state, action) => {
-        state.recommendedBooks = action.payload;
+        state.recommendedBooks = Array.isArray(action.payload)
+          ? action.payload
+          : [];
         state.isLoading = false;
       })
       .addCase(fetchRecommendedBooks.rejected, (state, action) => {
@@ -34,27 +52,26 @@ const bookSlice = createSlice({
       })
 
       .addCase(fetchLibraryBooks.fulfilled, (state, action) => {
-        state.books = action.payload;
+        state.books = Array.isArray(action.payload) ? action.payload : [];
       })
 
       .addCase(addBookToLibraryThunk.fulfilled, (state, action) => {
-        state.books.push(action.payload);
+        dedupePush(state.books, action.payload);
+      })
+
+      .addCase(addRecommendedBookToLibrary.fulfilled, (state, action) => {
+        if (!state.books) state.books = [];
+        const added = action.payload;
+        if (!added) return;
+        const id = added._id || added.id;
+        const has = state.books.some((b) => (b._id || b.id) === id);
+        if (!has) state.books.push(added);
       })
 
       .addCase(removeBookFromLibrary.fulfilled, (state, action) => {
         state.books = state.books.filter(
-          (book) => (book._id || book.id) !== action.payload
+          (book) => (book._id || book.id || book.bookId) !== action.payload
         );
-      })
-
-      .addCase(addRecommendedBookToLibrary.fulfilled, (state, action) => {
-        if (!state.books) {
-          state.books = [];
-        }
-
-        if (action.payload) {
-          state.books.push(action.payload);
-        }
       })
 
       .addCase(logoutThunk.fulfilled, (state) => {

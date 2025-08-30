@@ -8,6 +8,7 @@ import BookCard from "../components/books/BookCard";
 import ReadingModal from "../components/reading/ReadingModal";
 import ReadingSidebar from "../components/reading/ReadingSidebar";
 import ReadingPanel from "../components/reading/ReadingPanel";
+import EmptyLibraryState from "../components/library/EmptyLibraryState";
 import blockIcon from "../assets/block.svg";
 import {
   removeBookFromLibrary,
@@ -212,10 +213,9 @@ const MyLibraryPage = () => {
           </>
         )}
       </aside>
-
-      <section className="flex-1 bg-black p-6 rounded-[30px] flex flex-col gap-6 min-h-[400px]">
+      <section className="flex-1 bg-[#1F1F1F] p-6 rounded-[30px] flex flex-col gap-6 min-h-[400px]">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <h2 className="text-white text-2xl font-semibold">
+          <h2 className="text-white text-[28px] leading-8 font-bold tracking-[0.02em]">
             {readingBook ? "My reading" : "My library"}
           </h2>
 
@@ -254,76 +254,82 @@ const MyLibraryPage = () => {
 
         {!readingBook ? (
           <>
-            <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 justify-items-start">
-              {pagedBooks.map((book) => (
-                <div key={getBookId(book)} className="relative">
-                  <BookCard
-                    book={{
-                      title: book.title,
-                      author: book.author,
-                      imageUrl: book.imageUrl,
-                      totalPages: book.totalPages,
-                      _id: book._id,
-                      id: book.id,
-                      slug: book.slug,
-                    }}
-                    onClick={() => setModalBook(book)}
-                  />
+            {books.length === 0 ? (
+              <EmptyLibraryState />
+            ) : (
+              <>
+                <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 justify-items-start">
+                  {pagedBooks.map((book) => (
+                    <div key={getBookId(book)} className="relative">
+                      <BookCard
+                        book={{
+                          title: book.title,
+                          author: book.author,
+                          imageUrl: book.imageUrl,
+                          totalPages: book.totalPages,
+                          _id: book._id,
+                          id: book.id,
+                          slug: book.slug,
+                        }}
+                        onClick={() => setModalBook(book)}
+                      />
 
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      const id = getBookId(book);
-                      if (id) handleRemoveBook(id);
-                    }}
-                    aria-label="Remove from My Library"
-                    title="Remove from My Library"
-                    className="absolute z-10 bottom-2 right-2 w-8 h-8 grid place-items-center
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          const id = getBookId(book);
+                          if (id) handleRemoveBook(id);
+                        }}
+                        aria-label="Remove from My Library"
+                        title="Remove from My Library"
+                        className="absolute z-10 bottom-2 right-2 w-8 h-8 grid place-items-center
                                rounded-full border border-red-500/40 bg-black/30
                                hover:border-red-500/70 hover:bg-red-500/10 active:bg-red-500/20 transition"
-                  >
-                    <img
-                      src={blockIcon}
-                      alt=""
-                      className="w-4 h-4 pointer-events-none"
-                    />
-                  </button>
+                      >
+                        <img
+                          src={blockIcon}
+                          alt=""
+                          className="w-4 h-4 pointer-events-none"
+                        />
+                      </button>
+                    </div>
+                  ))}
+                  {Array.from({
+                    length: Math.max(0, ITEMS_PER_PAGE - pagedBooks.length),
+                  }).map((_, i) => (
+                    <div key={`ph-${i}`} className="w-[137px] h-[248px]" />
+                  ))}
                 </div>
-              ))}
-              {Array.from({
-                length: Math.max(0, ITEMS_PER_PAGE - pagedBooks.length),
-              }).map((_, i) => (
-                <div key={`ph-${i}`} className="w-[137px] h-[248px]" />
-              ))}
-            </div>
 
-            {books.length > ITEMS_PER_PAGE && (
-              <div className="mt-3 flex justify-center items-center gap-3 text-white">
-                <button
-                  onClick={handlePrev}
-                  disabled={page === 1}
-                  aria-label="Prev"
-                  className={pagerBtn}
-                >
-                  <span className="w-10 h-10 flex items-center justify-center border border-gray-600 rounded-full hover:bg-primary hover:text-white disabled:opacity-30 transition">
-                    ‹
-                  </span>
-                </button>
-                <span className="text-xs text-white/60 select-none">
-                  {page} / {totalPages}
-                </span>
-                <button
-                  onClick={handleNext}
-                  disabled={page === totalPages}
-                  aria-label="Next"
-                  className={pagerBtn}
-                >
-                  <span className="w-10 h-10 flex items-center justify-center border border-gray-600 rounded-full hover:bg-primary hover:text-white disabled:opacity-30 transition">
-                    ›
-                  </span>
-                </button>
-              </div>
+                {books.length > ITEMS_PER_PAGE && (
+                  <div className="mt-3 flex justify-center items-center gap-3 text-white">
+                    <button
+                      onClick={handlePrev}
+                      disabled={page === 1}
+                      aria-label="Prev"
+                      className={pagerBtn}
+                    >
+                      <span className="w-10 h-10 flex items-center justify-center border border-gray-600 rounded-full hover:bg-primary hover:text-white disabled:opacity-30 transition">
+                        ‹
+                      </span>
+                    </button>
+                    <span className="text-xs text-white/60 select-none">
+                      {page} / {totalPages}
+                    </span>
+                    <button
+                      onClick={handleNext}
+                      disabled={page === totalPages}
+                      aria-label="Next"
+                      className={pagerBtn}
+                    >
+                      <span className="w-10 h-10 flex items-center justify-center border border-gray-600 rounded-full hover:bg-primary hover:text-white disabled:opacity-30 transition">
+                        ›
+                      </span>
+                    </button>
+                  </div>
+                )}
+              </>
             )}
           </>
         ) : (

@@ -4,13 +4,13 @@ export const getRecommendedBooks = async (options = {}) => {
   const { page = 1, limit = 10, title = "", author = "" } = options;
   const params = { page, limit, title, author };
   const { data } = await api.get("/books/recommend", { params });
-  return data; // array
+  return data;
 };
 
 export const getLibraryBooks = async (status) => {
   const params = status ? { status } : undefined;
   const { data } = await api.get("/books/own", { params });
-  return data; // array
+  return data;
 };
 
 export const getBookById = async (id) => {

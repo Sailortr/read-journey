@@ -5,6 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { useSelector, useDispatch } from "react-redux";
 import { restoreUserFromLocalStorage } from "./redux/thunks/authThunks";
 import { fetchLibraryBooks } from "./redux/thunks/bookThunks";
+import Toast from "./components/ui/Toast";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -49,6 +50,7 @@ const App = () => {
         pauseOnHover
         theme="dark"
       />
+      <Toast />
     </>
   );
 };
