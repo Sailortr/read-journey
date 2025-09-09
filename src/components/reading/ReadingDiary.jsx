@@ -62,8 +62,7 @@ const ReadingDiary = ({ entries = [], totalPages = 0, onDelete }) => {
                       : "border-4 border-white/30"
                   }`}
                   aria-hidden="true"
-                ></span>
-
+                />
                 <span
                   className={`font-extrabold tracking-[-0.02em] ${
                     gi === 0
@@ -92,7 +91,7 @@ const ReadingDiary = ({ entries = [], totalPages = 0, onDelete }) => {
                 return (
                   <li
                     key={s.id || `${g.key}-${idx}`}
-                    className="grid grid-cols-[1fr_auto_auto] gap-4 items-center"
+                    className="grid grid-cols-[1fr_auto] gap-4 items-center"
                   >
                     <div>
                       <div className="text-white text-[20px] leading-[20px] font-medium tracking-[-0.02em]">
@@ -103,32 +102,32 @@ const ReadingDiary = ({ entries = [], totalPages = 0, onDelete }) => {
                       </div>
                     </div>
 
-                    <div className="flex flex-col items-center mr-2">
-                      <img
-                        src={blockIcon}
-                        alt=""
-                        className="object-contain"
-                        style={{ width: 59, height: 25 }}
-                      />
-                      <div className="mt-1 text-white/60 text-[12px] leading-[14px] tracking-[-0.02em] text-center">
-                        {pph} pages
-                        <br />
-                        per hour
+                    <div className="flex items-center gap-3 mr-1">
+                      <div className="flex flex-col items-center">
+                        <img
+                          src={blockIcon}
+                          alt=""
+                          className="object-contain"
+                          style={{ width: 59, height: 25 }}
+                        />
+                        <div className="mt-1 text-white/60 text-[12px] leading-[14px] tracking-[-0.02em] text-center">
+                          {pph} pages
+                          <br />
+                          per hour
+                        </div>
                       </div>
-                    </div>
 
-                    {onDelete ? (
-                      <button
-                        onClick={() => onDelete(s.id)}
-                        className="w-8 h-8 grid place-items-center rounded-md hover:bg-white/10 transition"
-                        title="Delete session"
-                        aria-label="Delete session"
-                      >
-                        <img src={trashIcon} alt="" className="w-4 h-4" />
-                      </button>
-                    ) : (
-                      <span className="w-8 h-8" />
-                    )}
+                      {onDelete ? (
+                        <button
+                          onClick={() => onDelete(s.id)}
+                          className="w-8 h-8 grid place-items-center rounded-md hover:bg-white/10 transition"
+                          title="Delete session"
+                          aria-label="Delete session"
+                        >
+                          <img src={trashIcon} alt="" className="w-4 h-4" />
+                        </button>
+                      ) : null}
+                    </div>
                   </li>
                 );
               })}

@@ -12,14 +12,17 @@ import MyLibraryPage from "../pages/MyLibraryPage";
 import ReadingPage from "../pages/ReadingPage";
 import ProtectedRoute from "./ProtectedRoute";
 import Header from "../components/layout/Header";
+import NotFoundPage from "../pages/NotFoundPage";
 
 const AppRouter = () => {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<Navigate to="/login" replace />} />
+
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+
         <Route
           path="/recommended"
           element={
@@ -28,6 +31,7 @@ const AppRouter = () => {
             </ProtectedRoute>
           }
         />
+
         <Route
           path="/library"
           element={
@@ -37,6 +41,7 @@ const AppRouter = () => {
             </ProtectedRoute>
           }
         />
+
         <Route
           path="/reading"
           element={
@@ -45,7 +50,8 @@ const AppRouter = () => {
             </ProtectedRoute>
           }
         />
-        <Route path="*" element={<Navigate to="/login" replace />} />
+
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Router>
   );

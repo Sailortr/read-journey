@@ -1,4 +1,3 @@
-// src/pages/MyLibraryPage.jsx
 import { useSelector, useDispatch } from "react-redux";
 import { useMemo, useState, useEffect } from "react";
 import AddBookForm from "../components/library/AddBookForm";
@@ -19,8 +18,10 @@ import readingService from "../services/readingService";
 const ITEMS_PER_PAGE = 10;
 const apiStatusFor = (filter) => (filter === "all" ? undefined : filter);
 
-const norm = (v, fallback = 1) =>
-  Math.max(1, Number.parseInt(v, 10) || fallback);
+const norm = (v, fallback = 0) => {
+  const n = Number.parseInt(v, 10);
+  return Number.isFinite(n) ? Math.max(0, n) : fallback;
+};
 
 const MyLibraryPage = () => {
   const dispatch = useDispatch();
@@ -52,7 +53,7 @@ const MyLibraryPage = () => {
         setPage((p) => Math.max(1, p - 1));
       }
     } catch (error) {
-      console.error("Kitap silinemedi:", error?.message);
+      console.error("The book couldn’t be deleted.", error?.message);
     }
   };
 
@@ -61,8 +62,11 @@ const MyLibraryPage = () => {
 
   const [isRecording, setIsRecording] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [startPageVal, setStartPageVal] = useState(1);
-  const [stopPageVal, setStopPageVal] = useState(1);
+
+  const [startPageVal, setStartPageVal] = useState(0);
+  const [stopPageVal, setStopPageVal] = useState(0);
+
+  const [inlineMsg, setInlineMsg] = useState("");
 
   const [activeSessions, setActiveSessions] = useState([]);
   const [timeLeftText, setTimeLeftText] = useState("");
@@ -86,11 +90,12 @@ const MyLibraryPage = () => {
             (s.finishPage ?? s.startPage ?? 0) - (s.startPage ?? 0)
           );
           const pph = minutes ? Math.round(pagesRead / (minutes / 60)) : 0;
+
           return {
             id: `${s._id || `${s.startReading}-${s.finishReading}`}`,
             date: s.finishReading || s.startReading || new Date().toISOString(),
-            startPage: s.startPage ?? 1,
-            stopPage: s.finishPage ?? s.startPage ?? 1,
+            startPage: s.startPage ?? 0,
+            stopPage: s.finishPage ?? s.startPage ?? 0,
             pagesRead,
             minutes,
             pagesPerHour: pph,
@@ -100,7 +105,7 @@ const MyLibraryPage = () => {
 
       setActiveSessions(parsed);
 
-      const lastStop = norm(parsed[0]?.stopPage ?? 1, 1);
+      const lastStop = parsed.length ? Math.max(0, parsed[0].stopPage) : 0;
       setStartPageVal(lastStop);
       setStopPageVal(lastStop);
 
@@ -123,7 +128,7 @@ const MyLibraryPage = () => {
         }
       }
     } catch (e) {
-      console.error("Kitap detayları alınamadı:", e?.message);
+      console.error("Failed to fetch book details:", e?.message);
     }
   };
 
@@ -132,33 +137,103 @@ const MyLibraryPage = () => {
     setModalBook(null);
     setIsRecording(false);
     setBusy(false);
+    setInlineMsg("");
     await refreshActiveBook(getBookId(book));
+  };
+
+  const handleStartChange = (v) => {
+    setInlineMsg("");
+    setStartPageVal(v);
+  };
+  const handleStopChange = (v) => {
+    setInlineMsg("");
+    setStopPageVal(v);
+  };
+
+  const handleDeleteSession = async (readingId) => {
+    if (!readingBook || busy) return;
+    try {
+      setBusy(true);
+      await readingService.deleteReading({
+        bookId: getBookId(readingBook),
+        readingId,
+      });
+      await refreshActiveBook(getBookId(readingBook));
+    } catch (e) {
+      console.error("Failed to delete session:", e?.message);
+    } finally {
+      setBusy(false);
+    }
   };
 
   const onRecordClick = async () => {
     if (!readingBook || busy) return;
+
     const id = getBookId(readingBook);
+    const total = Number(readingBook?.totalPages || 0);
+
+    const lastStop = activeSessions[0]?.stopPage ?? 0;
+    const expectedNextStart = Math.min(lastStop + 1, total || Infinity);
 
     try {
       setBusy(true);
+      setInlineMsg("");
 
       if (!isRecording) {
-        const start = norm(startPageVal, 1);
-        setStartPageVal(start);
-        setStopPageVal(start);
-        await readingService.startReading({ id, page: start });
+        if (total && lastStop >= total) {
+          setInlineMsg("It looks like this book is already finished.");
+          setBusy(false);
+          return;
+        }
+
+        const typedStart = norm(startPageVal, expectedNextStart);
+
+        if (typedStart !== expectedNextStart) {
+          setInlineMsg(`The start page can only be ${expectedNextStart}.`);
+          setStartPageVal(lastStop);
+          setBusy(false);
+          return;
+        }
+        if (total && typedStart > total) {
+          setInlineMsg(`Total pages: ${total}. You can’t exceed ${total}.`);
+          setBusy(false);
+          return;
+        }
+
+        setStartPageVal(typedStart);
+        setStopPageVal(typedStart);
+        await readingService.startReading({ id, page: typedStart });
         setIsRecording(true);
         await refreshActiveBook(id);
       } else {
-        const start = norm(startPageVal, 1);
-        const stop = Math.max(start, norm(stopPageVal, start));
-        setStopPageVal(stop);
-        await readingService.finishReading({ id, page: stop });
+        const minStop = startPageVal;
+        const typedStop = norm(stopPageVal, minStop);
+
+        if (typedStop < minStop) {
+          setInlineMsg(`The end page must be at least ${minStop}.`);
+          setBusy(false);
+          return;
+        }
+        if (total && typedStop > total) {
+          setInlineMsg(`The end page can be at most ${total}.`);
+          setBusy(false);
+          return;
+        }
+
+        setStopPageVal(typedStop);
+        await readingService.finishReading({ id, page: typedStop });
         setIsRecording(false);
         await refreshActiveBook(id);
+
+        if (total && typedStop === total) {
+          setInlineMsg(
+            "Congratulations! You’ve finished the book. You can find it under the ‘Done’ filter."
+          );
+        }
       }
     } catch (e) {
       console.error("Record error:", e?.message);
+      setInlineMsg(e?.message || "An error occurred.");
     } finally {
       setBusy(false);
     }
@@ -178,8 +253,8 @@ const MyLibraryPage = () => {
             isRecording={isRecording}
             startPage={startPageVal}
             stopPage={stopPageVal}
-            onChangeStartPage={setStartPageVal}
-            onChangeStopPage={setStopPageVal}
+            onChangeStartPage={handleStartChange}
+            onChangeStopPage={handleStopChange}
             onStart={onRecordClick}
             onStop={onRecordClick}
             sessions={activeSessions}
@@ -200,6 +275,8 @@ const MyLibraryPage = () => {
               })(),
             }}
             busy={busy}
+            inlineMsg={inlineMsg}
+            onDeleteEntry={handleDeleteSession}
           />
         ) : (
           <>
@@ -213,6 +290,7 @@ const MyLibraryPage = () => {
           </>
         )}
       </aside>
+
       <section className="flex-1 bg-[#1F1F1F] p-6 rounded-[30px] flex flex-col gap-6 min-h-[400px]">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <h2 className="text-white text-[28px] leading-8 font-bold tracking-[0.02em]">

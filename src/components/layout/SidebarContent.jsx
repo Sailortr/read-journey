@@ -2,7 +2,6 @@
 import { Link } from "react-router-dom";
 import { HiArrowRight } from "react-icons/hi";
 import FilterForm from "../dashboard/FilterForm";
-
 import step1Icon from "../../assets/1.svg";
 import step2Icon from "../../assets/2.svg";
 import booksIcon from "../../assets/books.svg";

@@ -17,6 +17,8 @@ const ReadingSidebar = ({
   totalPages = 0,
   stats,
   busy = false,
+  inlineMsg = "",
+  onDeleteEntry,
 }) => {
   const [tab, setTab] = useState("time");
   useEffect(() => {
@@ -25,6 +27,10 @@ const ReadingSidebar = ({
 
   const showProgressPlaceholder =
     !isRecording && (!sessions || sessions.length === 0);
+
+  const handleFocus = () => {
+    (isRecording ? onChangeStopPage : onChangeStartPage)?.("");
+  };
 
   return (
     <div className="w-full lg:w-[353px] flex-shrink-0 rounded-[30px]">
@@ -35,14 +41,16 @@ const ReadingSidebar = ({
 
         <input
           type="number"
-          min={1}
+          min={0}
+          step={1}
           value={isRecording ? stopPage : startPage}
+          onFocus={handleFocus}
           onChange={(e) =>
             (isRecording ? onChangeStopPage : onChangeStartPage)?.(
-              Number(e.target.value || 1)
+              e.target.value === "" ? "" : Number(e.target.value)
             )
           }
-          placeholder="1"
+          placeholder="0"
           className="w-full bg-[#1C1C1C] text-white placeholder-white/40 text-sm
                      px-4 py-3 rounded-2xl border border-white/10
                      hover:border-white/20 focus:border-white/40
@@ -51,6 +59,15 @@ const ReadingSidebar = ({
                      [&::-webkit-outer-spin-button]:appearance-none
                      [&::-webkit-inner-spin-button]:appearance-none"
         />
+
+        {inlineMsg ? (
+          <div
+            className="mt-2 text-[14px] leading-[18px]"
+            style={{ color: "#FF4D4F", fontFamily: "Gilroy, sans-serif" }}
+          >
+            {inlineMsg}
+          </div>
+        ) : null}
 
         <button
           onClick={isRecording ? onStop : onStart}
@@ -68,12 +85,10 @@ const ReadingSidebar = ({
         </button>
       </div>
 
-      {showProgressPlaceholder && (
+      {showProgressPlaceholder ? (
         <div className="mt-6 bg-[#1F1F1F] p-6 rounded-[30px] border border-white/10">
           <div className="flex items-center justify-between mb-3">
-            <h4 className="text-white text-base font-semibold tracking-[-0.02em]">
-              Progress
-            </h4>
+            <h4 className="text-white text-base font-semibold">Progress</h4>
             <img src={starIcon} alt="" className="w-5 h-5 opacity-80" />
           </div>
           <p className="text-[14px] leading-[18px] tracking-[-0.02em] text-white/70">
@@ -81,22 +96,16 @@ const ReadingSidebar = ({
             <br />
             To record, click on the red button above.
           </p>
-
           <div className="mt-8 w-full flex items-center justify-center">
             <div className="w-[88px] h-[88px] rounded-full bg-black/30 border border-white/10 grid place-items-center">
               <img src={starIcon} alt="" className="w-8 h-8 opacity-90" />
             </div>
           </div>
         </div>
-      )}
-
-      {!showProgressPlaceholder && (
+      ) : (
         <div className="mt-6 bg-[#1F1F1F] p-6 rounded-[30px] border border-white/10">
           <div className="flex items-center justify-between mb-3">
-            <h4 className="text-white text-base font-semibold tracking-[-0.02em]">
-              Diary
-            </h4>
-
+            <h4 className="text-white text-base font-semibold">Diary</h4>
             <div className="flex items-center gap-2">
               <button
                 type="button"
@@ -131,9 +140,7 @@ const ReadingSidebar = ({
             <ReadingDiary
               entries={sessions}
               totalPages={totalPages}
-              onDelete={
-                onStop
-              }
+              onDelete={onDeleteEntry}
             />
           ) : (
             <ReadingStats stats={stats} totalPages={totalPages} />
