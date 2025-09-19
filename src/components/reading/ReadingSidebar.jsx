@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import starIcon from "../../assets/star.svg";
 import hourglassIcon from "../../assets/hourglass.svg";
 import statsIcon from "../../assets/pie-chart.svg";
 import ReadingDiary from "./ReadingDiary";
@@ -21,6 +20,7 @@ const ReadingSidebar = ({
   onDeleteEntry,
 }) => {
   const [tab, setTab] = useState("time");
+
   useEffect(() => {
     if (isRecording) setTab("time");
   }, [isRecording]);
@@ -85,68 +85,69 @@ const ReadingSidebar = ({
         </button>
       </div>
 
-      {showProgressPlaceholder ? (
-        <div className="mt-6 bg-[#1F1F1F] p-6 rounded-[30px] border border-white/10">
-          <div className="flex items-center justify-between mb-3">
-            <h4 className="text-white text-base font-semibold">Progress</h4>
-            <img src={starIcon} alt="" className="w-5 h-5 opacity-80" />
+      <div className="mt-6 bg-[#1F1F1F] p-6 rounded-[30px] border border-white/10">
+        <div className="flex items-center justify-between mb-3">
+          <h4 className="text-white text-base font-semibold tracking-[-0.02em]">
+            {tab === "stats" ? "Statistics" : "Diary"}
+          </h4>
+
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setTab("time")}
+              title="Reading time"
+              className={`w-8 h-8 grid place-items-center rounded-full border transition
+                          ${
+                            tab === "time"
+                              ? "border-white/40 bg-white/10"
+                              : "border-white/15 hover:border-white/30"
+                          }`}
+            >
+              <img src={hourglassIcon} alt="" className="w-4 h-4" />
+            </button>
+            <button
+              type="button"
+              onClick={() => setTab("stats")}
+              title="Statistics"
+              className={`w-8 h-8 grid place-items-center rounded-full border transition
+                          ${
+                            tab === "stats"
+                              ? "border-white/40 bg-white/10"
+                              : "border-white/15 hover:border-white/30"
+                          }`}
+            >
+              <img src={statsIcon} alt="" className="w-4 h-4 opacity-90" />
+            </button>
           </div>
+        </div>
+
+        {tab === "stats" && (
+          <p
+            className="mb-4 text-[14px] leading-[18px] tracking-[-0.02em]"
+            style={{ color: "#686868", fontFamily: "Gilroy, sans-serif" }}
+          >
+            Each page, each chapter is a new round of knowledge, a new step
+            towards understanding. By rewriting statistics, we create our own
+            reading history.
+          </p>
+        )}
+
+        {showProgressPlaceholder && tab !== "stats" ? (
           <p className="text-[14px] leading-[18px] tracking-[-0.02em] text-white/70">
             Here you will see when and how much you read.
             <br />
             To record, click on the red button above.
           </p>
-          <div className="mt-8 w-full flex items-center justify-center">
-            <div className="w-[88px] h-[88px] rounded-full bg-black/30 border border-white/10 grid place-items-center">
-              <img src={starIcon} alt="" className="w-8 h-8 opacity-90" />
-            </div>
-          </div>
-        </div>
-      ) : (
-        <div className="mt-6 bg-[#1F1F1F] p-6 rounded-[30px] border border-white/10">
-          <div className="flex items-center justify-between mb-3">
-            <h4 className="text-white text-base font-semibold">Diary</h4>
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => setTab("time")}
-                title="Reading time"
-                className={`w-8 h-8 grid place-items-center rounded-full border transition
-                            ${
-                              tab === "time"
-                                ? "border-white/40 bg-white/10"
-                                : "border-white/15 hover:border-white/30"
-                            }`}
-              >
-                <img src={hourglassIcon} alt="" className="w-4 h-4" />
-              </button>
-              <button
-                type="button"
-                onClick={() => setTab("stats")}
-                title="Statistics"
-                className={`w-8 h-8 grid place-items-center rounded-full border transition
-                            ${
-                              tab === "stats"
-                                ? "border-white/40 bg-white/10"
-                                : "border-white/15 hover:border-white/30"
-                            }`}
-              >
-                <img src={statsIcon} alt="" className="w-4 h-4 opacity-90" />
-              </button>
-            </div>
-          </div>
-
-          {tab === "time" ? (
-            <ReadingDiary
-              entries={sessions}
-              totalPages={totalPages}
-              onDelete={onDeleteEntry}
-            />
-          ) : (
-            <ReadingStats stats={stats} totalPages={totalPages} />
-          )}
-        </div>
-      )}
+        ) : tab === "time" ? (
+          <ReadingDiary
+            entries={sessions}
+            totalPages={totalPages}
+            onDelete={onDeleteEntry}
+          />
+        ) : (
+          <ReadingStats stats={stats} totalPages={totalPages} />
+        )}
+      </div>
     </div>
   );
 };

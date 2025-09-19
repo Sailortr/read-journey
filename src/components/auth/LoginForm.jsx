@@ -1,26 +1,12 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
 import { useDispatch } from "react-redux";
 import { loginThunk } from "../../redux/thunks/authThunks";
 import { fetchLibraryBooks } from "../../redux/thunks/bookThunks";
 import { useNavigate, Link } from "react-router-dom";
 import { toast } from "react-toastify";
-
 import eyeIcon from "../../assets/eye.svg";
 import eyeOffIcon from "../../assets/eye-off.svg";
-
-const schema = yup.object().shape({
-  email: yup
-    .string()
-    .matches(/^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/, "Invalid email format")
-    .required("Email is required"),
-  password: yup
-    .string()
-    .min(7, "Minimum 7 characters")
-    .required("Password is required"),
-});
 
 export default function LoginForm() {
   const dispatch = useDispatch();
@@ -30,10 +16,8 @@ export default function LoginForm() {
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm({
-    resolver: yupResolver(schema),
-  });
+    formState: { isSubmitting },
+  } = useForm();
 
   const onSubmit = async (data) => {
     try {
@@ -41,64 +25,70 @@ export default function LoginForm() {
       await dispatch(fetchLibraryBooks());
       navigate("/recommended");
     } catch (error) {
-      toast.error(error.message || "Login failed");
+      toast.error(error?.message || "Login failed");
     }
   };
 
-  return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className="w-full max-w-sm mx-auto text-white h-full flex flex-col justify-between"
-    >
-      <div>
-        <div className="mb-6">
-          <input
-            {...register("email")}
-            className="w-full px-4 py-3 rounded-lg bg-[#2e2e2e] placeholder-gray-300 text-white focus:outline-none"
-            type="email"
-            placeholder="Mail: Your@email.com"
-          />
-          {errors.email && (
-            <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>
-          )}
-        </div>
+  const baseInput =
+    "w-full rounded-[12px] bg-[#1C1C1C] text-white placeholder-white/60 " +
+    "border outline-none transition " +
+    "border-white/10 hover:border-white/20 focus:border-white/40 " +
+    "focus:ring-2 focus:ring-white/15 " +
+    "h-[44px] px-4 text-[14px] " +
+    "md:h-[50px] md:px-5 md:text-base";
 
-        <div className="mb-6 relative">
-          <input
-            {...register("password")}
-            className="w-full px-4 py-3 pr-12 rounded-lg bg-[#2e2e2e] placeholder-gray-300 text-white focus:outline-none"
-            type={showPassword ? "text" : "password"}
-            placeholder="Password: Yourpasswordhere"
-          />
-          <button
-            type="button"
-            onClick={() => setShowPassword((prev) => !prev)}
-            className="absolute top-1/2 right-3 -translate-y-1/2"
-          >
-            <img
-              src={showPassword ? eyeOffIcon : eyeIcon}
-              alt="Toggle Password"
-              className="w-5 h-5 opacity-80"
-            />
-          </button>
-          {errors.password && (
-            <p className="text-red-500 text-xs mt-1">
-              {errors.password.message}
-            </p>
-          )}
-        </div>
+  return (
+    <form onSubmit={handleSubmit(onSubmit)} className="text-white">
+      <div className="mb-4">
+        <input
+          {...register("email")}
+          type="email"
+          autoComplete="email"
+          placeholder="Mail: Your@email.com"
+          className={baseInput}
+        />
       </div>
 
-      <div className="flex items-center justify-start gap-6 mt-auto pt-6">
+      <div className="mb-2 relative">
+        <input
+          {...register("password")}
+          type={showPassword ? "text" : "password"}
+          autoComplete="current-password"
+          placeholder="Password: Yourpasswordhere"
+          className={`${baseInput} pr-12`}
+        />
+
+        <button
+          type="button"
+          onClick={() => setShowPassword((p) => !p)}
+          aria-label={showPassword ? "Hide password" : "Show password"}
+          className="absolute right-4 top-1/2 -translate-y-1/2 opacity-80 hover:opacity-100 transition"
+        >
+          <img
+            src={showPassword ? eyeOffIcon : eyeIcon}
+            alt=""
+            className="w-5 h-5"
+          />
+        </button>
+      </div>
+
+      <div className="flex items-center gap-6 pt-6">
         <button
           disabled={isSubmitting}
-          className="bg-white text-black font-semibold py-3 px-12 rounded-full hover:bg-gray-200 transition"
           type="submit"
+          className="
+    inline-flex h-[52px] items-center justify-center px-[54px] rounded-[30px]
+    font-semibold leading-none border transition-colors duration-200
+    bg-[#F9F9F9] text-black border-transparent
+    hover:bg-[#141414] hover:text-white hover:border-[#2E2E2E]
+    focus:outline-none focus:ring-2 focus:ring-white/10
+    disabled:opacity-60 disabled:hover:bg-[#F9F9F9] disabled:hover:text-black disabled:hover:border-transparent
+  "
         >
-          {isSubmitting ? "Logging in..." : "Log In"}
+          Log In
         </button>
 
-        <p className="text-sm text-gray-400">
+        <p className="text-sm text-[#9E9E9E]">
           Don’t have an account?{" "}
           <Link to="/register" className="underline hover:text-white">
             Sign up

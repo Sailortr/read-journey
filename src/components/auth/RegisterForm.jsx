@@ -6,9 +6,28 @@ import { useDispatch } from "react-redux";
 import { registerThunk } from "../../redux/thunks/authThunks";
 import { useNavigate, Link } from "react-router-dom";
 import { toast } from "react-toastify";
+import eyeIcon from "../../assets/eye.svg";
+import eyeOffIcon from "../../assets/eye-off.svg";
 
-import EyeIcon from "../../assets/eye.svg";
-import EyeOffIcon from "../../assets/eye-off.svg";
+const ErrorIcon = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+    <circle cx="12" cy="12" r="10" stroke="#FF4D4F" strokeWidth="2" />
+    <path d="M12 7v7" stroke="#FF4D4F" strokeWidth="2" strokeLinecap="round" />
+    <circle cx="12" cy="17" r="1.5" fill="#FF4D4F" />
+  </svg>
+);
+const CheckIcon = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+    <circle cx="12" cy="12" r="10" stroke="#22C55E" strokeWidth="2" />
+    <path
+      d="M7 12.5l3.3 3.2L17.5 9"
+      stroke="#22C55E"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
 
 const schema = yup.object().shape({
   name: yup.string().required("Name is required"),
@@ -30,10 +49,18 @@ export default function RegisterForm() {
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm({
-    resolver: yupResolver(schema),
-  });
+    formState: { errors, isSubmitting, dirtyFields },
+    watch,
+  } = useForm({ resolver: yupResolver(schema), mode: "onChange" });
+
+  const nameVal = watch("name");
+  const emailVal = watch("email");
+  const passwordVal = watch("password");
+
+  const nameOk = !!nameVal && !errors.name;
+  const emailOk = !!emailVal && !errors.email;
+  const passwordOk =
+    !!passwordVal && !errors.password && passwordVal.length >= 7;
 
   const onSubmit = async (data) => {
     try {
@@ -44,76 +71,126 @@ export default function RegisterForm() {
     }
   };
 
+  const baseInput =
+    "w-full rounded-[12px] bg-[#1C1C1C] text-white placeholder-white/60 " +
+    "px-5 py-4 border outline-none transition " +
+    "border-white/10 hover:border-white/20 focus:border-white/40 " +
+    "focus:ring-2 focus:ring-white/15";
+
+  const classFor = (ok, err, extra = "") => {
+    if (err)
+      return `${baseInput} border-2 border-[#FF4D4F] focus:ring-[#FF4D4F]/30 ${extra}`;
+    if (ok)
+      return `${baseInput} border-2 border-[#22C55E] focus:ring-[#22C55E]/25 ${extra}`;
+    return `${baseInput} ${extra}`;
+  };
+
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className="w-full max-w-[440px] mx-auto bg-[#121212] text-white px-6 py-10 rounded-3xl shadow-lg 
-                 md:px-8 md:py-12 
-                 xl:bg-transparent xl:px-0 xl:py-0"
-    >
-      <div className="space-y-6">
-        <div className="flex flex-col gap-1">
-          <label className="text-sm text-gray-400"></label>
-          <input
-            {...register("name")}
-            type="text"
-            placeholder="Name: Ilona Ratushniak"
-            className="bg-[#1C1C1C] px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-500"
-          />
-          {errors.name && (
-            <p className="text-red-500 text-xs">{errors.name.message}</p>
-          )}
-        </div>
-
-        <div className="flex flex-col gap-1">
-          <label className="text-sm text-gray-400"></label>
-          <input
-            {...register("email")}
-            type="email"
-            placeholder="Mail: Your@email.com"
-            className="bg-[#1C1C1C] px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-500"
-          />
-          {errors.email && (
-            <p className="text-red-500 text-xs">{errors.email.message}</p>
-          )}
-        </div>
-
-        <div className="flex flex-col gap-1 relative">
-          <label className="text-sm text-gray-400"></label>
-          <input
-            {...register("password")}
-            type={showPassword ? "text" : "password"}
-            placeholder="Password: Yourpasswordhere"
-            className="bg-[#1C1C1C] px-4 py-3 pr-10 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-500 text-white w-full"
-          />
-          <img
-            src={showPassword ? EyeOffIcon : EyeIcon}
-            alt="Toggle password"
-            onClick={() => setShowPassword((prev) => !prev)}
-            className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 opacity-80 cursor-pointer"
-          />
-          {errors.password && (
-            <p className="text-red-500 text-xs mt-1">
-              {errors.password.message}
-            </p>
-          )}
-        </div>
-        <div className="flex items-center justify-start gap-6 mt-auto pt-6">
-          <button
-            disabled={isSubmitting}
-            type="submit"
-            className="bg-white text-black font-semibold py-3 px-8 rounded-full hover:bg-gray-200 transition"
-          >
-            {isSubmitting ? "Registering..." : "Registration"}
-          </button>
-
-          <p className="text-sm text-gray-400">
-            Already have an account?{" "}
-            <Link to="/login" className="underline hover:text-white">
-              Log in
-            </Link>
+    <form onSubmit={handleSubmit(onSubmit)} className="text-white">
+      <div className="mb-4">
+        <input
+          {...register("name")}
+          type="text"
+          autoComplete="name"
+          aria-invalid={!!errors.name}
+          placeholder="Name: Ilona Ratushniak"
+          className={classFor(nameOk, !!errors.name)}
+        />
+        {errors.name ? (
+          <p className="text-[13px] mt-2" style={{ color: "#FF4D4F" }}>
+            Enter a valid name*
           </p>
+        ) : nameOk && dirtyFields.name ? (
+          <p className="text-[13px] mt-2" style={{ color: "#22C55E" }}>
+            Looks good
+          </p>
+        ) : null}
+      </div>
+
+      <div className="mb-4">
+        <input
+          {...register("email")}
+          type="email"
+          autoComplete="email"
+          aria-invalid={!!errors.email}
+          placeholder="Mail: Your@email.com"
+          className={classFor(emailOk, !!errors.email)}
+        />
+        {errors.email ? (
+          <p className="text-[13px] mt-2" style={{ color: "#FF4D4F" }}>
+            Enter a valid email*
+          </p>
+        ) : emailOk && dirtyFields.email ? (
+          <p className="text-[13px] mt-2" style={{ color: "#22C55E" }}>
+            Looks good
+          </p>
+        ) : null}
+      </div>
+
+      <div className="mb-2 relative">
+        <input
+          {...register("password")}
+          type={showPassword ? "text" : "password"}
+          autoComplete="new-password"
+          aria-invalid={!!errors.password}
+          placeholder="Password: Yourpasswordhere"
+          className={classFor(passwordOk, !!errors.password, "pr-12")}
+        />
+
+        <div className="absolute right-4 top-1/2 -translate-y-1/2">
+          {errors.password ? (
+            <ErrorIcon />
+          ) : passwordOk ? (
+            <CheckIcon />
+          ) : (
+            <button
+              type="button"
+              onClick={() => setShowPassword((p) => !p)}
+              aria-label={showPassword ? "Hide password" : "Show password"}
+              className="opacity-80 hover:opacity-100 transition"
+            >
+              <img
+                src={showPassword ? eyeOffIcon : eyeIcon}
+                alt=""
+                className="w-5 h-5"
+              />
+            </button>
+          )}
         </div>
+
+        {errors.password ? (
+          <p className="text-[13px] mt-2" style={{ color: "#FF4D4F" }}>
+            Enter a valid Password*
+          </p>
+        ) : passwordOk ? (
+          <p className="text-[13px] mt-2" style={{ color: "#22C55E" }}>
+            Password is secure
+          </p>
+        ) : null}
+      </div>
+
+      <div className="flex items-center gap-6 pt-6">
+        <button
+          disabled={isSubmitting}
+          type="submit"
+          className="
+    inline-flex h-[52px] items-center justify-center px-[54px] rounded-[30px]
+    font-semibold leading-none border transition-colors duration-200
+    bg-[#F9F9F9] text-black border-transparent
+    hover:bg-[#141414] hover:text-white hover:border-[#2E2E2E]
+    focus:outline-none focus:ring-2 focus:ring-white/10
+    disabled:opacity-60 disabled:hover:bg-[#F9F9F9] disabled:hover:text-black disabled:hover:border-transparent
+  "
+        >
+          Registration
+        </button>
+
+        <p className="text-sm text-[#9E9E9E]">
+          Already have an account?{" "}
+          <Link to="/login" className="underline hover:text-white">
+            Log in
+          </Link>
+        </p>
       </div>
     </form>
   );
