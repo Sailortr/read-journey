@@ -14,6 +14,7 @@ import {
   fetchLibraryBooks,
 } from "../redux/thunks/bookThunks";
 import readingService from "../services/readingService";
+import BookFinishedModal from "../components/reading/BookFinishedModal";
 
 const ITEMS_PER_PAGE = 10;
 const apiStatusFor = (filter) => (filter === "all" ? undefined : filter);
@@ -70,6 +71,9 @@ const MyLibraryPage = () => {
 
   const [activeSessions, setActiveSessions] = useState([]);
   const [timeLeftText, setTimeLeftText] = useState("");
+
+  const [finishedBook, setFinishedBook] = useState(null);
+  const [finishedOpen, setFinishedOpen] = useState(false);
 
   const refreshActiveBook = async (bookId) => {
     try {
@@ -166,6 +170,18 @@ const MyLibraryPage = () => {
     }
   };
 
+  const handleFinishedClose = async () => {
+    setFinishedOpen(false);
+    setFinishedBook(null);
+    setReadingBook(null);
+    setIsRecording(false);
+    setInlineMsg("");
+    setFilter("done");
+    try {
+      await dispatch(fetchLibraryBooks(apiStatusFor("done")));
+    } catch {}
+  };
+
   const onRecordClick = async () => {
     if (!readingBook || busy) return;
 
@@ -226,9 +242,8 @@ const MyLibraryPage = () => {
         await refreshActiveBook(id);
 
         if (total && typedStop === total) {
-          setInlineMsg(
-            "Congratulations! You’ve finished the book. You can find it under the ‘Done’ filter."
-          );
+          setFinishedBook(readingBook);
+          setFinishedOpen(true);
         }
       }
     } catch (e) {
@@ -426,6 +441,10 @@ const MyLibraryPage = () => {
           onClose={() => setModalBook(null)}
           onStart={(b) => enterReadingMode(b)}
         />
+      )}
+
+      {finishedOpen && finishedBook && (
+        <BookFinishedModal book={finishedBook} onClose={handleFinishedClose} />
       )}
     </div>
   );
