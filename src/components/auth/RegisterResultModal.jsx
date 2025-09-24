@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { HiOutlineX } from "react-icons/hi";
 import okIcon from "../../assets/ok.svg";
 
-const AUTO_CLOSE_MS = 3500;
+const AUTO_CLOSE_MS = 5000;
 
 const RegisterResultModal = ({
   type = "success",
