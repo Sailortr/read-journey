@@ -261,8 +261,8 @@ const MyLibraryPage = () => {
     "transition focus:outline-none focus:ring-2 focus:ring-white/20";
 
   return (
-    <div className="max-w-[1280px] mx-auto px-4 py-6 flex flex-col lg:flex-row gap-6">
-      <aside className="w-full lg:w-[353px] flex flex-col gap-6 flex-shrink-0 bg-black rounded-[30px]">
+    <div className="mx-auto w-full max-w-[1280px] px-6 md:px-8 lg:px-10 py-4 flex flex-col lg:flex-row gap-6 lg:gap-8">
+      <aside className="w-full lg:w-[353px] flex-shrink-0 flex flex-col gap-6 bg-[#1F1F1F] border border-[#2D2D2D] rounded-[30px]">
         {readingBook ? (
           <ReadingSidebar
             isRecording={isRecording}
@@ -306,7 +306,7 @@ const MyLibraryPage = () => {
         )}
       </aside>
 
-      <section className="flex-1 bg-[#1F1F1F] p-6 rounded-[30px] flex flex-col gap-6 min-h-[400px]">
+      <section className="flex-1 min-w-0 bg-[#1F1F1F] border border-[#2D2D2D] p-6 rounded-[30px] flex flex-col gap-6 min-h-[400px]">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <h2 className="text-white text-[28px] leading-8 font-bold tracking-[0.02em]">
             {readingBook ? "My reading" : "My library"}

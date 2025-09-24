@@ -5,9 +5,9 @@ import * as yup from "yup";
 import { useDispatch } from "react-redux";
 import { registerThunk } from "../../redux/thunks/authThunks";
 import { useNavigate, Link } from "react-router-dom";
-import { toast } from "react-toastify";
 import eyeIcon from "../../assets/eye.svg";
 import eyeOffIcon from "../../assets/eye-off.svg";
+import RegisterResultModal from "./RegisterResultModal";
 
 const ErrorIcon = () => (
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
@@ -46,6 +46,14 @@ export default function RegisterForm() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
 
+  const [modal, setModal] = useState({
+    open: false,
+    type: "success",
+    title: "",
+    message: "",
+    autoClose: false,
+  });
+
   const {
     register,
     handleSubmit,
@@ -65,11 +73,29 @@ export default function RegisterForm() {
   const onSubmit = async (data) => {
     try {
       await dispatch(registerThunk(data)).unwrap();
-      navigate("/recommended");
+
+      setModal({
+        open: true,
+        type: "success",
+        title: "Registration successful",
+        message:
+          "Your account has been created. Redirecting to the login page…",
+        autoClose: true,
+      });
+
+      setTimeout(() => navigate("/login", { replace: true }), 3000);
     } catch (error) {
-      toast.error(error || "Registration failed");
+      setModal({
+        open: true,
+        type: "error",
+        title: "Registration failed",
+        message: "We couldn’t create your account. Please try again.",
+        autoClose: false,
+      });
     }
   };
+
+  const closeModal = () => setModal((m) => ({ ...m, open: false }));
 
   const baseInput =
     "w-full rounded-[12px] bg-[#1C1C1C] text-white placeholder-white/60 " +
@@ -86,112 +112,137 @@ export default function RegisterForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="text-white">
-      <div className="mb-4">
-        <input
-          {...register("name")}
-          type="text"
-          autoComplete="name"
-          aria-invalid={!!errors.name}
-          placeholder="Name: Ilona Ratushniak"
-          className={classFor(nameOk, !!errors.name)}
-        />
-        {errors.name ? (
-          <p className="text-[13px] mt-2" style={{ color: "#FF4D4F" }}>
-            Enter a valid name*
-          </p>
-        ) : nameOk && dirtyFields.name ? (
-          <p className="text-[13px] mt-2" style={{ color: "#22C55E" }}>
-            Looks good
-          </p>
-        ) : null}
-      </div>
-
-      <div className="mb-4">
-        <input
-          {...register("email")}
-          type="email"
-          autoComplete="email"
-          aria-invalid={!!errors.email}
-          placeholder="Mail: Your@email.com"
-          className={classFor(emailOk, !!errors.email)}
-        />
-        {errors.email ? (
-          <p className="text-[13px] mt-2" style={{ color: "#FF4D4F" }}>
-            Enter a valid email*
-          </p>
-        ) : emailOk && dirtyFields.email ? (
-          <p className="text-[13px] mt-2" style={{ color: "#22C55E" }}>
-            Looks good
-          </p>
-        ) : null}
-      </div>
-
-      <div className="mb-2 relative">
-        <input
-          {...register("password")}
-          type={showPassword ? "text" : "password"}
-          autoComplete="new-password"
-          aria-invalid={!!errors.password}
-          placeholder="Password: Yourpasswordhere"
-          className={classFor(passwordOk, !!errors.password, "pr-12")}
-        />
-
-        <div className="absolute right-4 top-1/2 -translate-y-1/2">
-          {errors.password ? (
-            <ErrorIcon />
-          ) : passwordOk ? (
-            <CheckIcon />
-          ) : (
-            <button
-              type="button"
-              onClick={() => setShowPassword((p) => !p)}
-              aria-label={showPassword ? "Hide password" : "Show password"}
-              className="opacity-80 hover:opacity-100 transition"
-            >
-              <img
-                src={showPassword ? eyeOffIcon : eyeIcon}
-                alt=""
-                className="w-5 h-5"
-              />
-            </button>
-          )}
+    <>
+      <form onSubmit={handleSubmit(onSubmit)} className="text-white">
+        <div className="mb-4">
+          <input
+            {...register("name")}
+            type="text"
+            autoComplete="name"
+            aria-invalid={!!errors.name}
+            placeholder="Name: Ilona Ratushniak"
+            className={classFor(nameOk, !!errors.name)}
+          />
+          {errors.name ? (
+            <p className="text-[13px] mt-2" style={{ color: "#FF4D4F" }}>
+              Enter a valid name*
+            </p>
+          ) : nameOk && dirtyFields.name ? (
+            <p className="text-[13px] mt-2" style={{ color: "#22C55E" }}>
+              Looks good
+            </p>
+          ) : null}
         </div>
 
-        {errors.password ? (
-          <p className="text-[13px] mt-2" style={{ color: "#FF4D4F" }}>
-            Enter a valid Password*
-          </p>
-        ) : passwordOk ? (
-          <p className="text-[13px] mt-2" style={{ color: "#22C55E" }}>
-            Password is secure
-          </p>
-        ) : null}
-      </div>
+        <div className="mb-4">
+          <input
+            {...register("email")}
+            type="email"
+            autoComplete="email"
+            aria-invalid={!!errors.email}
+            placeholder="Mail: Your@email.com"
+            className={classFor(emailOk, !!errors.email)}
+          />
+          {errors.email ? (
+            <p className="text-[13px] mt-2" style={{ color: "#FF4D4F" }}>
+              Enter a valid email*
+            </p>
+          ) : emailOk && dirtyFields.email ? (
+            <p className="text-[13px] mt-2" style={{ color: "#22C55E" }}>
+              Looks good
+            </p>
+          ) : null}
+        </div>
 
-      <div className="flex items-center gap-6 pt-6">
-        <button
-          disabled={isSubmitting}
-          type="submit"
-          className="
-    inline-flex h-[52px] items-center justify-center px-[54px] rounded-[30px]
-    font-semibold leading-none border transition-colors duration-200
+        <div className="mb-2 relative">
+          <input
+            {...register("password")}
+            type={showPassword ? "text" : "password"}
+            autoComplete="new-password"
+            aria-invalid={!!errors.password}
+            placeholder="Password: Yourpasswordhere"
+            className={classFor(passwordOk, !!errors.password, "pr-12")}
+          />
+
+          <div className="absolute right-4 top-1/2 -translate-y-1/2">
+            {errors.password ? (
+              <ErrorIcon />
+            ) : passwordOk ? (
+              <CheckIcon />
+            ) : (
+              <button
+                type="button"
+                onClick={() => setShowPassword((p) => !p)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                className="opacity-80 hover:opacity-100 transition"
+              >
+                <img
+                  src={showPassword ? eyeOffIcon : eyeIcon}
+                  alt=""
+                  className="w-5 h-5"
+                />
+              </button>
+            )}
+          </div>
+
+          {errors.password ? (
+            <p className="text-[13px] mt-2" style={{ color: "#FF4D4F" }}>
+              Enter a valid Password*
+            </p>
+          ) : passwordOk ? (
+            <p className="text-[13px] mt-2" style={{ color: "#22C55E" }}>
+              Password is secure
+            </p>
+          ) : null}
+        </div>
+
+        <div className="flex items-center gap-6 pt-6">
+          <button
+            disabled={isSubmitting}
+            type="submit"
+            className="
+    inline-flex items-center justify-center rounded-[30px]
+    h-[42px] px-[29px] text-[14px] leading-[18px] font-bold
+    border transition-colors duration-200
     bg-[#F9F9F9] text-black border-transparent
     hover:bg-[#141414] hover:text-white hover:border-[#2E2E2E]
     focus:outline-none focus:ring-2 focus:ring-white/10
     disabled:opacity-60 disabled:hover:bg-[#F9F9F9] disabled:hover:text-black disabled:hover:border-transparent
-  "
-        >
-          Registration
-        </button>
 
-        <p className="text-sm text-[#9E9E9E]">
-          Already have an account?{" "}
-          <Link to="/login" className="underline hover:text-white">
-            Log in
-          </Link>
-        </p>
-      </div>
-    </form>
+    md:h-[52px] md:px-[54px] md:text-base md:leading-none
+  "
+          >
+            Registration
+          </button>
+
+          <p className="text-sm text-[#9E9E9E]">
+            Already have an account?{" "}
+            <Link to="/login" className="underline hover:text-white">
+              Log in
+            </Link>
+          </p>
+        </div>
+      </form>
+
+      {modal.open && (
+        <RegisterResultModal
+          type={modal.type}
+          title={
+            modal.type === "success"
+              ? "Registration successful"
+              : "Registration failed"
+          }
+          message={modal.message}
+          onClose={
+            modal.type === "success"
+              ? () => navigate("/login", { replace: true })
+              : () => closeModal()
+          }
+          autoClose={modal.autoClose}
+          primaryActionText={modal.type === "error" ? "Try again" : undefined}
+          onPrimaryAction={modal.type === "error" ? closeModal : undefined}
+        />
+      )}
+    </>
   );
 }

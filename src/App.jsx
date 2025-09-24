@@ -6,6 +6,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { restoreUserFromLocalStorage } from "./redux/thunks/authThunks";
 import { fetchLibraryBooks } from "./redux/thunks/bookThunks";
 import Toast from "./components/ui/Toast";
+import "react-lazy-load-image-component/src/effects/blur.css";
 
 const App = () => {
   const dispatch = useDispatch();

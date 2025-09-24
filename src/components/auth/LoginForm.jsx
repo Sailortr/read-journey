@@ -77,15 +77,18 @@ export default function LoginForm() {
           disabled={isSubmitting}
           type="submit"
           className="
-    inline-flex h-[52px] items-center justify-center px-[54px] rounded-[30px]
-    font-semibold leading-none border transition-colors duration-200
-    bg-[#F9F9F9] text-black border-transparent
-    hover:bg-[#141414] hover:text-white hover:border-[#2E2E2E]
-    focus:outline-none focus:ring-2 focus:ring-white/10
-    disabled:opacity-60 disabled:hover:bg-[#F9F9F9] disabled:hover:text-black disabled:hover:border-transparent
-  "
+            inline-flex items-center justify-center rounded-[30px]
+            font-bold leading-none border transition-colors duration-200
+            bg-[#F9F9F9] text-black border-transparent
+            hover:bg-[#141414] hover:text-white hover:border-[#2E2E2E]
+            focus:outline-none focus:ring-2 focus:ring-white/10
+            disabled:opacity-60 disabled:hover:bg-[#F9F9F9] disabled:hover:text-black disabled:hover:border-transparent
+
+            h-[42px] px-[45px] text-[14px]        /* mobile (Figma) */
+            md:h-[52px] md:px-[54px] md:text-base  /* ≥ md: eski değerler */
+          "
         >
-          Log In
+          Log in
         </button>
 
         <p className="text-sm text-[#9E9E9E]">

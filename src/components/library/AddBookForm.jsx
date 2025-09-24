@@ -21,10 +21,10 @@ const AddBookForm = () => {
     try {
       await dispatch(addBookToLibraryThunk(form)).unwrap();
       dispatch(fetchLibraryBooks());
-      toast.success("Kitap başarıyla eklendi!");
+      toast.success("Book added successfully!");
       setForm({ title: "", author: "", totalPages: "" });
     } catch (err) {
-      toast.error(err || "Kitap eklenemedi!");
+      toast.error(err || "Could not add the book!");
     }
   };
 

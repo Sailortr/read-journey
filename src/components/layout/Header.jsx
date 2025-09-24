@@ -35,8 +35,8 @@ const Header = () => {
     "text-white after:content-[''] after:bg-[#6C8CFF] after:h-[3px] after:w-10 after:rounded-full after:absolute after:left-1/2 after:-translate-x-1/2 after:-bottom-2";
 
   return (
-    <header className="w-full bg-black text-white">
-      <div className="mx-auto max-w-[1310px] px-4 sm:px-6 lg:px-8 py-3">
+    <header className="w-full bg-#141414 text-white">
+      <div className="mx-auto max-w-[1280px] px-4 sm:px-6 lg:px-8 py-3">
         <div className="rounded-[15px] bg-[#1F1F1F] border border-[#2D2D2D] h-[74px] px-4 sm:px-6 lg:px-8 flex items-center justify-between">
           <div className="flex items-center gap-2 min-w-0">
             <img

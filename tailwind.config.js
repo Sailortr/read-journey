@@ -10,7 +10,7 @@ export default {
         primary: "#34D399",
         accent: "#6366F1",
         "accent-dark": "#4F46E5",
-        background: "#121212", // arka plan rengi
+        background: "#141414",
       },
     },
   },

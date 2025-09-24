@@ -1,46 +1,20 @@
-import { useEffect, useRef, useState } from "react";
+// src/components/books/BookCard.jsx
+import { useState } from "react";
+import { LazyLoadImage } from "react-lazy-load-image-component";
 import fallbackImg from "../../assets/placeholder-cover.png";
+import Spinner from "../ui/Spinner";
 
 const BookCard = ({ book, onClick }) => {
   const { title = "Untitled", author = "Unknown", imageUrl } = book || {};
-  const ref = useRef(null);
-
-  const [isVisible, setIsVisible] = useState(false);
-  const [imgLoaded, setImgLoaded] = useState(false);
-  const [src, setSrc] = useState(fallbackImg);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    if (!("IntersectionObserver" in window)) {
-      setIsVisible(true);
-      return;
-    }
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          io.disconnect();
-        }
-      },
-      { root: null, rootMargin: "200px 0px", threshold: 0.01 }
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
-
-  useEffect(() => {
-    if (isVisible) setSrc(imageUrl || fallbackImg);
-  }, [isVisible, imageUrl]);
+  const [loaded, setLoaded] = useState(false);
 
   const onErr = (e) => {
-    if (e.currentTarget.src !== fallbackImg) e.currentTarget.src = fallbackImg;
-    setImgLoaded(true);
+    if (e.currentTarget?.src !== fallbackImg) e.currentTarget.src = fallbackImg;
+    setLoaded(true);
   };
 
   return (
     <div
-      ref={ref}
       role="button"
       tabIndex={0}
       onClick={() => onClick?.(book)}
@@ -53,37 +27,30 @@ const BookCard = ({ book, onClick }) => {
                  focus:outline-none focus:ring-2 focus:ring-white/20"
     >
       <div className="relative w-full h-[200px] rounded-2xl overflow-hidden bg-[#2A2A2A]">
-        {!imgLoaded && (
-          <div className="absolute inset-0 animate-pulse bg-[#2A2A2A]" />
+        {!loaded && (
+          <div className="absolute inset-0 z-20 grid place-items-center pointer-events-none">
+            <Spinner className="w-7 h-7 text-white/90" />
+          </div>
         )}
 
-        <img
-          src={src}
+        <LazyLoadImage
+          src={imageUrl || fallbackImg}
           alt={title || "Book cover"}
-          loading="lazy"
-          decoding="async"
-          onLoad={() => setImgLoaded(true)}
+          effect="blur"
+          placeholderSrc={fallbackImg}
+          afterLoad={() => setLoaded(true)}
           onError={onErr}
-          draggable="false"
-          className={`absolute inset-0 block w-full h-full object-cover
-                      transition-opacity duration-300 ease-in-out
-                      ${imgLoaded ? "opacity-100" : "opacity-0"}`}
+          draggable={false}
+          wrapperClassName="absolute inset-0 block w-full h-full z-0"
+          className="w-full h-full object-cover"
         />
       </div>
 
       <div className="px-2 pt-2 text-left">
-        <h3
-          className="truncate font-bold text-[14px] leading-[18px] tracking-[-0.02em] text-[#F9F9F9]"
-          style={{ fontFamily: "Gilroy, sans-serif" }}
-          title={title}
-        >
+        <h3 className="truncate font-bold text-[14px] leading-[18px] tracking-[-0.02em] text-[#F9F9F9]">
           {title}
         </h3>
-        <p
-          className="truncate font-medium text-[10px] leading-[12px] tracking-[-0.02em] text-[#686868]"
-          style={{ fontFamily: "Gilroy, sans-serif" }}
-          title={author}
-        >
+        <p className="truncate font-medium text-[10px] leading-[12px] tracking-[-0.02em] text-[#686868]">
           {author}
         </p>
       </div>
