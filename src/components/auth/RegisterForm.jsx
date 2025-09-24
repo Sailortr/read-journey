@@ -35,10 +35,7 @@ const schema = yup.object().shape({
     .string()
     .matches(/^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/, "Invalid email format")
     .required("Email is required"),
-  password: yup
-    .string()
-    .min(7, "Minimum 7 characters")
-    .required("Password is required"),
+  password: yup.string().min(7, "Minimum 7 characters").required("Password is required"),
 });
 
 export default function RegisterForm() {
@@ -67,8 +64,7 @@ export default function RegisterForm() {
 
   const nameOk = !!nameVal && !errors.name;
   const emailOk = !!emailVal && !errors.email;
-  const passwordOk =
-    !!passwordVal && !errors.password && passwordVal.length >= 7;
+  const passwordOk = !!passwordVal && !errors.password && passwordVal.length >= 7;
 
   const onSubmit = async (data) => {
     try {
@@ -78,13 +74,10 @@ export default function RegisterForm() {
         open: true,
         type: "success",
         title: "Registration successful",
-        message:
-          "Your account has been created. Redirecting to the login page…",
-        autoClose: true,
+        message: "Your account has been created. Redirecting to the login page…",
+        autoClose: true, 
       });
-
-      setTimeout(() => navigate("/login", { replace: true }), 3000);
-    } catch (error) {
+    } catch {
       setModal({
         open: true,
         type: "error",
@@ -104,10 +97,8 @@ export default function RegisterForm() {
     "focus:ring-2 focus:ring-white/15";
 
   const classFor = (ok, err, extra = "") => {
-    if (err)
-      return `${baseInput} border-2 border-[#FF4D4F] focus:ring-[#FF4D4F]/30 ${extra}`;
-    if (ok)
-      return `${baseInput} border-2 border-[#22C55E] focus:ring-[#22C55E]/25 ${extra}`;
+    if (err) return `${baseInput} border-2 border-[#FF4D4F] focus:ring-[#FF4D4F]/30 ${extra}`;
+    if (ok) return `${baseInput} border-2 border-[#22C55E] focus:ring-[#22C55E]/25 ${extra}`;
     return `${baseInput} ${extra}`;
   };
 
@@ -124,13 +115,9 @@ export default function RegisterForm() {
             className={classFor(nameOk, !!errors.name)}
           />
           {errors.name ? (
-            <p className="text-[13px] mt-2" style={{ color: "#FF4D4F" }}>
-              Enter a valid name*
-            </p>
+            <p className="text-[13px] mt-2" style={{ color: "#FF4D4F" }}>Enter a valid name*</p>
           ) : nameOk && dirtyFields.name ? (
-            <p className="text-[13px] mt-2" style={{ color: "#22C55E" }}>
-              Looks good
-            </p>
+            <p className="text-[13px] mt-2" style={{ color: "#22C55E" }}>Looks good</p>
           ) : null}
         </div>
 
@@ -144,13 +131,9 @@ export default function RegisterForm() {
             className={classFor(emailOk, !!errors.email)}
           />
           {errors.email ? (
-            <p className="text-[13px] mt-2" style={{ color: "#FF4D4F" }}>
-              Enter a valid email*
-            </p>
+            <p className="text-[13px] mt-2" style={{ color: "#FF4D4F" }}>Enter a valid email*</p>
           ) : emailOk && dirtyFields.email ? (
-            <p className="text-[13px] mt-2" style={{ color: "#22C55E" }}>
-              Looks good
-            </p>
+            <p className="text-[13px] mt-2" style={{ color: "#22C55E" }}>Looks good</p>
           ) : null}
         </div>
 
@@ -176,23 +159,15 @@ export default function RegisterForm() {
                 aria-label={showPassword ? "Hide password" : "Show password"}
                 className="opacity-80 hover:opacity-100 transition"
               >
-                <img
-                  src={showPassword ? eyeOffIcon : eyeIcon}
-                  alt=""
-                  className="w-5 h-5"
-                />
+                <img src={showPassword ? eyeOffIcon : eyeIcon} alt="" className="w-5 h-5" />
               </button>
             )}
           </div>
 
           {errors.password ? (
-            <p className="text-[13px] mt-2" style={{ color: "#FF4D4F" }}>
-              Enter a valid Password*
-            </p>
+            <p className="text-[13px] mt-2" style={{ color: "#FF4D4F" }}>Enter a valid Password*</p>
           ) : passwordOk ? (
-            <p className="text-[13px] mt-2" style={{ color: "#22C55E" }}>
-              Password is secure
-            </p>
+            <p className="text-[13px] mt-2" style={{ color: "#22C55E" }}>Password is secure</p>
           ) : null}
         </div>
 
@@ -201,25 +176,22 @@ export default function RegisterForm() {
             disabled={isSubmitting}
             type="submit"
             className="
-    inline-flex items-center justify-center rounded-[30px]
-    h-[42px] px-[29px] text-[14px] leading-[18px] font-bold
-    border transition-colors duration-200
-    bg-[#F9F9F9] text-black border-transparent
-    hover:bg-[#141414] hover:text-white hover:border-[#2E2E2E]
-    focus:outline-none focus:ring-2 focus:ring-white/10
-    disabled:opacity-60 disabled:hover:bg-[#F9F9F9] disabled:hover:text-black disabled:hover:border-transparent
-
-    md:h-[52px] md:px-[54px] md:text-base md:leading-none
-  "
+              inline-flex items-center justify-center rounded-[30px]
+              h-[42px] px-[29px] text-[14px] leading-[18px] font-bold
+              border transition-colors duration-200
+              bg-[#F9F9F9] text-black border-transparent
+              hover:bg-[#141414] hover:text-white hover:border-[#2E2E2E]
+              focus:outline-none focus:ring-2 focus:ring-white/10
+              disabled:opacity-60 disabled:hover:bg-[#F9F9F9] disabled:hover:text-black disabled:hover:border-transparent
+              md:h-[52px] md:px-[54px] md:text-base md:leading-none
+            "
           >
             Registration
           </button>
 
           <p className="text-sm text-[#9E9E9E]">
             Already have an account?{" "}
-            <Link to="/login" className="underline hover:text-white">
-              Log in
-            </Link>
+            <Link to="/login" className="underline hover:text-white">Log in</Link>
           </p>
         </div>
       </form>
@@ -227,11 +199,7 @@ export default function RegisterForm() {
       {modal.open && (
         <RegisterResultModal
           type={modal.type}
-          title={
-            modal.type === "success"
-              ? "Registration successful"
-              : "Registration failed"
-          }
+          title={modal.type === "success" ? "Registration successful" : "Registration failed"}
           message={modal.message}
           onClose={
             modal.type === "success"

@@ -1,5 +1,8 @@
+import { useEffect } from "react";
 import { HiOutlineX } from "react-icons/hi";
 import okIcon from "../../assets/ok.svg";
+
+const AUTO_CLOSE_MS = 3500;
 
 const RegisterResultModal = ({
   type = "success",
@@ -10,12 +13,20 @@ const RegisterResultModal = ({
   onPrimaryAction,
   autoClose = false,
 }) => {
+  useEffect(() => {
+    if (!autoClose) return;
+    const t = setTimeout(() => {
+      onClose?.();
+    }, AUTO_CLOSE_MS);
+    return () => clearTimeout(t);
+  }, [autoClose, onClose]);
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center"
       role="dialog"
       aria-modal="true"
-      onClick={onClose}
+      onClick={autoClose ? undefined : onClose}
     >
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
 
