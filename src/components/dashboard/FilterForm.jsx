@@ -22,7 +22,6 @@ export default function FilterForm({ filters = {}, onChange }) {
     const t = setTimeout(() => {
       onChange?.(localFilters);
     }, 300000);
-
     return () => clearTimeout(t);
   }, [localFilters, onChange]);
 
@@ -36,6 +35,13 @@ export default function FilterForm({ filters = {}, onChange }) {
     setLocalFilters(cleared);
     onChange?.(cleared);
   };
+
+  const btnBase =
+    "inline-flex items-center justify-center whitespace-nowrap " +
+    "rounded-[30px] border border-white/20 text-white font-bold " +
+    "text-[14px] leading-[18px] tracking-[0.02em] " +
+    "h-[38px] px-[20px] hover:bg-[#323232] transition-all duration-200 " +
+    "sm:h-[40px] sm:px-[24px] lg:h-[42px] lg:px-[28px]";
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -58,26 +64,11 @@ export default function FilterForm({ filters = {}, onChange }) {
       />
 
       <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-        <button
-          type="submit"
-          className="flex items-center justify-center
-             w-[98px] h-[38px] sm:w-[110px] sm:h-[40px] lg:w-[122px] lg:h-[42px] 
-             border border-white/20 text-white font-semibold rounded-[30px] 
-             px-[20px] py-[10px] sm:px-[24px] sm:py-[11px] lg:px-[28px] lg:py-[12px] 
-             hover:bg-[#323232] transition-all duration-200"
-        >
+        <button type="submit" className={btnBase}>
           To apply
         </button>
 
-        <button
-          type="button"
-          onClick={handleClear}
-          className="flex items-center justify-center
-             w-[98px] h-[38px] sm:w-[110px] sm:h-[40px] lg:w-[122px] lg:h-[42px] 
-             border border-white/20 text-white font-semibold rounded-[30px] 
-             px-[20px] py-[10px] sm:px-[24px] sm:py-[11px] lg:px-[28px] lg:py-[12px] 
-             hover:bg-[#323232] transition-all duration-200"
-        >
+        <button type="button" onClick={handleClear} className={btnBase}>
           Clear
         </button>
       </div>
