@@ -83,7 +83,7 @@ export default function LoginForm() {
             hover:bg-[#141414] hover:text-white hover:border-[#2E2E2E]
             focus:outline-none focus:ring-2 focus:ring-white/10
             disabled:opacity-60 disabled:hover:bg-[#F9F9F9] disabled:hover:text-black disabled:hover:border-transparent
-            h-[42px] px-[47px] text-[14px]     
+            h-[42px] px-[50px] text-[14px]     
             md:h-[52px] md:px-[54px] md:text-base
           "
         >
