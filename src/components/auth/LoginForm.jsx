@@ -72,20 +72,23 @@ export default function LoginForm() {
         </button>
       </div>
 
-      <div className="flex items-center gap-6 pt-6">
+      <div className="flex items-center gap-6 pt-6 flex-wrap">
         <button
           disabled={isSubmitting}
           type="submit"
           className="
-            inline-flex items-center justify-center rounded-[30px]
-            font-bold leading-none border transition-colors duration-200
-            bg-[#F9F9F9] text-black border-transparent
-            hover:bg-[#141414] hover:text-white hover:border-[#2E2E2E]
-            focus:outline-none focus:ring-2 focus:ring-white/10
-            disabled:opacity-60 disabled:hover:bg-[#F9F9F9] disabled:hover:text-black disabled:hover:border-transparent
-            h-[42px] px-[50px] text-[14px]     
-            md:h-[52px] md:px-[54px] md:text-base
-          "
+    inline-flex items-center justify-center rounded-[30px]
+    font-bold border transition-colors duration-200
+    bg-[#F9F9F9] text-black border-transparent
+    hover:bg-[#141414] hover:text-white hover:border-[#2E2E2E]
+    focus:outline-none focus:ring-2 focus:ring-white/10
+    disabled:opacity-60 disabled:hover:bg-[#F9F9F9] disabled:hover:text-black disabled:hover:border-transparent
+
+    h-[42px] px-[29px] text-[14px] leading-[18px]
+    whitespace-nowrap flex-shrink-0 min-w-[140px]
+
+    md:h-[52px] md:px-[54px] md:text-base md:leading-none
+  "
         >
           Log in
         </button>
