@@ -1,4 +1,3 @@
-// src/components/books/BookCard.jsx
 import { useState } from "react";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import fallbackImg from "../../assets/placeholder-cover.png";
@@ -21,7 +20,7 @@ const BookCard = ({ book, onClick }) => {
       onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && onClick?.(book)}
       aria-label={`${title} by ${author}`}
       title={title}
-      className="relative w-[137px] h-[248px] cursor-pointer bg-[#1C1C1C]
+      className="relative w-full max-w-[137px] h-[248px] cursor-pointer bg-[#1C1C1C]
                  rounded-2xl overflow-hidden shadow-md
                  hover:shadow-lg hover:scale-[1.03] transition duration-300 ease-in-out
                  focus:outline-none focus:ring-2 focus:ring-white/20"

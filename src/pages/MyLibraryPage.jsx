@@ -1,4 +1,3 @@
-// src/pages/MyLibraryPage.jsx
 import { useSelector, useDispatch } from "react-redux";
 import { useMemo, useState, useEffect } from "react";
 import AddBookForm from "../components/library/AddBookForm";
@@ -55,7 +54,7 @@ const MyLibraryPage = () => {
         setPage((p) => Math.max(1, p - 1));
       }
     } catch (error) {
-      console.error("The book couldn’t be deleted.", error?.message);
+      console.error("The book not deleted", error?.message);
     }
   };
 
@@ -302,7 +301,7 @@ const MyLibraryPage = () => {
         )}
       </aside>
 
-      <section className="flex-1 min-w-0 bg-[#1F1F1F] border border-[#2D2D2D] p-6 rounded-[30px] flex flex-col gap-6 min-h-[400px]">
+      <section className="flex-1 min-w-0 bg-[#1F1F1F] border border-[#2D2D2D] px-4 py-6 sm:p-6 rounded-[30px] flex flex-col gap-6 min-h-[400px]">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <h2 className="text-white text-[28px] leading-8 font-bold tracking-[0.02em]">
             {readingBook ? "My reading" : "My library"}
@@ -350,19 +349,12 @@ const MyLibraryPage = () => {
                 <div
                   className="
                     grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5
-                    gap-x-5 gap-y-4 sm:gap-3
-                    justify-items-stretch sm:justify-items-start
+                    gap-x-2 gap-y-4 sm:gap-3
+                    justify-items-center sm:justify-items-start
                   "
                 >
-                  {pagedBooks.map((book, idx) => (
-                    <div
-                      key={getBookId(book)}
-                      className={`relative ${
-                        idx % 2 === 0
-                          ? "justify-self-start"
-                          : "justify-self-end"
-                      } sm:justify-self-start`}
-                    >
+                  {pagedBooks.map((book) => (
+                    <div key={getBookId(book)} className="relative">
                       <BookCard
                         book={{
                           title: book.title,
