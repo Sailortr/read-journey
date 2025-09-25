@@ -1,3 +1,4 @@
+// src/pages/MyLibraryPage.jsx
 import { useSelector, useDispatch } from "react-redux";
 import { useMemo, useState, useEffect } from "react";
 import AddBookForm from "../components/library/AddBookForm";
@@ -60,18 +61,13 @@ const MyLibraryPage = () => {
 
   const [modalBook, setModalBook] = useState(null);
   const [readingBook, setReadingBook] = useState(null);
-
   const [isRecording, setIsRecording] = useState(false);
   const [busy, setBusy] = useState(false);
-
   const [startPageVal, setStartPageVal] = useState(0);
   const [stopPageVal, setStopPageVal] = useState(0);
-
   const [inlineMsg, setInlineMsg] = useState("");
-
   const [activeSessions, setActiveSessions] = useState([]);
   const [timeLeftText, setTimeLeftText] = useState("");
-
   const [finishedBook, setFinishedBook] = useState(null);
   const [finishedOpen, setFinishedOpen] = useState(false);
 
@@ -351,9 +347,22 @@ const MyLibraryPage = () => {
               <EmptyLibraryState />
             ) : (
               <>
-                <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 justify-items-start">
-                  {pagedBooks.map((book) => (
-                    <div key={getBookId(book)} className="relative">
+                <div
+                  className="
+                    grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5
+                    gap-x-5 gap-y-4 sm:gap-3
+                    justify-items-stretch sm:justify-items-start
+                  "
+                >
+                  {pagedBooks.map((book, idx) => (
+                    <div
+                      key={getBookId(book)}
+                      className={`relative ${
+                        idx % 2 === 0
+                          ? "justify-self-start"
+                          : "justify-self-end"
+                      } sm:justify-self-start`}
+                    >
                       <BookCard
                         book={{
                           title: book.title,
@@ -388,10 +397,14 @@ const MyLibraryPage = () => {
                       </button>
                     </div>
                   ))}
+
                   {Array.from({
                     length: Math.max(0, ITEMS_PER_PAGE - pagedBooks.length),
                   }).map((_, i) => (
-                    <div key={`ph-${i}`} className="w-[137px] h-[248px]" />
+                    <div
+                      key={`ph-${i}`}
+                      className="w-[137px] h-[248px] hidden sm:block"
+                    />
                   ))}
                 </div>
 
