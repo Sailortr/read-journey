@@ -10,78 +10,85 @@ const RecommendedBooks = () => {
   useEffect(() => {
     const fetchBooks = async () => {
       const accessToken = localStorage.getItem("token");
-
-      if (!accessToken) {
-        console.warn("Access token not found. User might not be logged in.");
-        return;
-      }
+      if (!accessToken) return;
 
       try {
-        const response = await fetch(
+        const res = await fetch(
           "https://readjourney.b.goit.study/api/books/recommend?limit=3",
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
+          { headers: { Authorization: `Bearer ${accessToken}` } }
         );
-
-        if (!response.ok) {
-          throw new Error(
-            `Unauthorized or invalid response (${response.status})`
-          );
-        }
-
-        const raw = await response.json();
-        const recommendedBooks = raw.results;
-
-        if (!Array.isArray(recommendedBooks)) {
-          throw new Error("Data is not an array");
-        }
-
-        setBooks(recommendedBooks);
-      } catch (error) {
-        console.error("Error fetching recommended books:", error.message);
+        if (!res.ok) throw new Error(`Bad response ${res.status}`);
+        const { results } = await res.json();
+        if (Array.isArray(results)) setBooks(results);
+      } catch (e) {
+        console.error("recommend error:", e?.message);
       }
     };
 
     fetchBooks();
   }, []);
 
-  const handleImageError = (e) => {
-    e.target.src = fallbackImg;
+  const onImgErr = (e) => {
+    if (e.currentTarget.src !== fallbackImg) e.currentTarget.src = fallbackImg;
   };
 
   return (
-    <div className="bg-dark-800 p-4 rounded-[30px]">
-      <h3 className="text-white text-base font-semibold mb-3">
+    <div
+      className="
+        rounded-[12px] border border-white/10 bg-[#262626]
+        p-4 sm:p-5
+      "
+    >
+      <h3 className="text-[#E3E3E3] text-base font-semibold mb-3">
         Recommended books
       </h3>
 
-      <div className="flex gap-2">
-        {books.map((book) => (
-          <div
-            key={book._id || book.id}
-            onClick={() => setSelectedBook(book)}
-            className="w-[100px] flex-shrink-0 text-white text-sm cursor-pointer hover:scale-105 hover:opacity-90 transition-transform duration-200"
+      <div className="grid grid-cols-3 gap-3">
+        {books.map((b) => (
+          <button
+            key={b._id || b.id}
+            type="button"
+            onClick={() => setSelectedBook(b)}
+            className="group flex flex-col items-center outline-none"
+            aria-label={`${b.title} – ${b.author}`}
+            title={b.title}
           >
-            <img
-              src={book.imageUrl}
-              alt={book.title}
-              onError={handleImageError}
-              className="w-full h-[140px] object-cover rounded-lg mb-1"
-            />
-            <p className="font-medium truncate">{book.title}</p>
-            <p className="text-xs text-gray-400 truncate">{book.author}</p>
-          </div>
+            <div
+              className="
+                w-[71px] h-[107px] md:w-[84px] md:h-[126px]
+                rounded-[8px] overflow-hidden
+                shadow-sm ring-1 ring-white/5
+                transition-transform duration-200 group-hover:scale-[1.03]
+              "
+            >
+              <img
+                src={b.imageUrl || fallbackImg}
+                alt={b.title}
+                onError={onImgErr}
+                className="w-full h-full object-cover block"
+                loading="lazy"
+                decoding="async"
+                draggable="false"
+              />
+            </div>
+
+            <div className="mt-2 w-[71px] md:w-[84px] text-center">
+              <p className="truncate text-[12px] leading-4 font-medium text-[#E3E3E3]">
+                {b.title}
+              </p>
+              <p className="truncate text-[10px] leading-4 text-[#686868]">
+                {b.author}
+              </p>
+            </div>
+          </button>
         ))}
       </div>
 
-      <div className="mt-4 flex justify-between items-center text-sm text-white">
-        <Link to="/recommended" className="hover:underline">
+      <div className="mt-4 flex items-center justify-between text-sm">
+        <Link to="/recommended" className="text-[#E3E3E3] hover:underline">
           Home
         </Link>
-        <Link to="/recommended" className="text-xl">
+        <Link to="/recommended" className="text-[#E3E3E3] text-xl leading-none">
           →
         </Link>
       </div>
