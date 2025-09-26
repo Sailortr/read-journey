@@ -17,12 +17,11 @@ const Header = () => {
     localStorage.removeItem("user");
   };
 
-  const formatName = (nameOrEmail) => {
-    return nameOrEmail
+  const formatName = (nameOrEmail) =>
+    nameOrEmail
       ?.split(" ")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
       .join(" ");
-  };
 
   const displayName = formatName(user?.name || user?.email || "User");
   const avatarLetter = (user?.name || user?.email || "U")
@@ -35,8 +34,8 @@ const Header = () => {
     "text-white after:content-[''] after:bg-[#6C8CFF] after:h-[3px] after:w-10 after:rounded-full after:absolute after:left-1/2 after:-translate-x-1/2 after:-bottom-2";
 
   return (
-    <header className="w-full bg-#141414 text-white">
-      <div className="mx-auto max-w-[1280px] px-4 sm:px-6 lg:px-8 py-3">
+    <header className="w-full bg-[#141414] text-white">
+      <div className="mx-auto w-full max-w-[1280px] px-6 md:px-8 lg:px-10 py-3">
         <div className="rounded-[15px] bg-[#1F1F1F] border border-[#2D2D2D] h-[74px] px-4 sm:px-6 lg:px-8 flex items-center justify-between">
           <div className="flex items-center gap-2 min-w-0">
             <img
@@ -67,6 +66,7 @@ const Header = () => {
               My library
             </NavLink>
           </nav>
+
           <div className="flex items-center gap-3">
             <div className="h-[42px] w-[42px] rounded-full border border-[#4B4B4B] flex items-center justify-center text-white font-semibold text-lg">
               {avatarLetter}
@@ -80,6 +80,7 @@ const Header = () => {
             >
               Log out
             </button>
+
             <button
               onClick={() => setOpen(true)}
               className="md:hidden text-3xl"
@@ -90,6 +91,7 @@ const Header = () => {
           </div>
         </div>
       </div>
+
       {open && (
         <>
           <div

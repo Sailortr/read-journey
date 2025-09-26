@@ -2,7 +2,7 @@ import Header from "./Header";
 
 const MainLayout = ({ sidebarContent, children }) => {
   return (
-    <div className="min-h-screen bg-#141414 text-white">
+    <div className="min-h-screen bg-[#141414] text-white">
       <div className="px-4 sm:px-6 lg:px-8 py-3">
         <Header />
       </div>

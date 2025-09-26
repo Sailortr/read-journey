@@ -35,7 +35,7 @@ const App = () => {
 
   if (!isInitialCheckDone) {
     return (
-      <div className="bg-black min-h-screen flex items-center justify-center text-white p-6">
+      <div className="bg-[#141414] min-h-screen flex items-center justify-center text-white p-6">
         Loading...
       </div>
     );
