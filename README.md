@@ -47,14 +47,11 @@ Screens
 Add screenshots to /screenshots in the repo and update the paths below.
 
 Login (Desktop)
-![Login Desktop](./screenshots/login_desktop.png)
-
-Register (Desktop)
-![Register Desktop](./screenshots/register_desktop.png)
+![Login Desktop](/public/Logindesk.jpg)
 
 Tablet & Mobile
-![Tablet](./screenshots/tablet.png)
-![Mobile](./screenshots/mobile.png)
+![Tablet](/public/Registab.jpg)
+![Mobile](/public/Regismob.jpg)
 
 Getting Started
 
