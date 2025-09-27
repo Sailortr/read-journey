@@ -8,34 +8,6 @@ Live (Vercel): https://read-journey-blue.vercel.app
 
 Repository: https://github.com/Sailortr/read-journey
 
-Author: Muhammet Uzunoğlu
-
-Table of Contents
-
-Features
-
-Tech Stack
-
-Screens
-
-Getting Started
-
-Scripts
-
-Project Structure
-
-Design Notes (Figma → Code)
-
-Accessibility
-
-Deployment
-
-Contributing
-
-License
-
-Features
-
 Auth flow: Register and Login
 
 Form validation: on Register with Figma’s exact states (normal, hover, error, success)
